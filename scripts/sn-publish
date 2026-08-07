@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""sn-publish — package an installed app into a NAMED update set, headlessly.
+
+WHY THIS EXISTS (measured 2026-08-03 — codex § Lane A):
+`now-sdk install` is APPLICATION delivery. It does not capture into update sets: metadata lands in
+`sys_metadata` under the app scope and is versioned in `sys_update_version` with
+`source = sys_upgrade_history`. Installing a full 25-artifact app as GLOBAL with a named set current
+put 4 rows in that set — two flows and two action types, i.e. exactly the post-install ACTIVATION
+writes — while the other 21 installed artifacts captured nowhere. Making the app global does
+NOT make the installer capture; it only removes the app's own competing default set.
+
+The platform's own bridge is `Publish to Update Set` on sys_app (documented:
+application-development/t_PublishApplicationsToAnUpdateSet.md — "the latest update of each
+application file in the application is copied into it. The update set is marked as complete").
+Its only logic is GlideAjax('com.snc.apps.AppsAjaxProcessor', function=publishToUpdateSet), which is
+COMPILED JAVA — there is no scriptable Glide API and no now-sdk command. So the lane is an HTTP POST
+to the endpoint the browser posts to.
+
+FOOTGUNS, each paid for:
+  1. /xmlhttp.do REFUSES basic auth — `<xml error="invalid token"/>`, HTTP 401. It wants the session
+     CSRF token. Hence the real login below. (/angular.do also 401s; /ajax_processor.do returns the
+     HTML shell, which looks like a 200 success and is not.)
+  2. The POST returns a sys_progress_worker id, NOT a verdict. Poll the worker.
+  3. sys_progress_worker has NO `percent_complete` field on this instance — read `state` /
+     `state_code` / `message`. (Same family as the CI/CD progress record that never populates
+     `state`: never assume a progress schema, read it.)
+  4. Publishing marks the target set COMPLETE, which LOCKS it. One publish per set; a corrected
+     build needs a fresh set.
+  5. Publish copies what is INSTALLED, not what is BUILT. Read the artifacts back first — global
+     scope silently discards dictionary columns lacking a `u_` prefix (HTTP 201, zero rows), so a
+     table can install "successfully" with none of its columns and publish cleanly as an empty shell.
+  6. Application data is EXCLUDED by default. Pass `--include-data` only for a bounded,
+     source-owned data set that belongs in the transport artifact; external-estate records stay out.
+  7. `--include-data` IS NOT SUFFICIENT for rows inserted via REST after install. The platform never
+     registered them as the application's own data, so the flag finds nothing and the publish still
+     reports success. A config-as-data deliverable that skips the row count arrives on the receiving
+     instance as an empty shell, and the rule depending on it silently never fires. COUNT DATA ROWS
+     IN `sys_update_xml` YOURSELF. (Measured: 3 seeded rows live on the instance, 0 in the set.)
+  8. This script performs a REAL sign-in as $SN_USER, because /xmlhttp.do needs a session token.
+     If a human is signed into the same account in a browser, THIS WILL LOG THEM OUT MID-RUN.
+     Give the publish path its own service account before demoing anything live.
+
+CLAUDE.md INVARIANT 5 HOLDS: no browser is driven and nothing is authored here. Artifacts are authored in
+Fluent; this call only PACKAGES them.
+
+Usage:
+  sn-publish <app_sys_id> <update_set_sys_id> <update_set_name> [--include-data]
+  sn-publish <app_sys_id> --new "<update set name>" [--include-data]
+      # create the set, then publish into it
+Creds: ~/.snpdi/env (SN_INSTANCE / SN_USER / SN_PASS), consumed via env, never printed.
+"""
+import base64, http.cookiejar, json, os, re, subprocess, sys, time, urllib.parse, urllib.request
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ENV = os.path.expanduser("~/.snpdi/env")
+
+
+def load_env():
+    if not os.path.exists(ENV):
+        sys.exit(f"sn-publish: {ENV} missing — drop PDI creds first (see domain CLAUDE.md)")
+    out = subprocess.run(["bash", "-c", f"set -a; source {ENV}; set +a; "
+                          "printf '%s\\n%s\\n%s' \"$SN_INSTANCE\" \"$SN_USER\" \"$SN_PASS\""],
+                         capture_output=True, text=True).stdout.split("\n")
+    return out[0], out[1], out[2]
+
+
+INST, USER, PW = load_env()
+AUTH = base64.b64encode(f"{USER}:{PW}".encode()).decode()
+jar = http.cookiejar.CookieJar()
+OP = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+OP.addheaders = [("User-Agent", "Mozilla/5.0 (Macintosh) sn-rig/1.0")]
+
+
+def rest(method, path, body=None):
+    r = urllib.request.Request(INST + path, method=method,
+                               data=json.dumps(body).encode() if body else None,
+                               headers={"Authorization": "Basic " + AUTH,
+                                        "Accept": "application/json",
+                                        "Content-Type": "application/json"})
+    with urllib.request.urlopen(r) as z:
+        return json.load(z)["result"]
+
+
+def rows_in(us):
+    return len(rest("GET", "/api/now/table/sys_update_xml?" + urllib.parse.urlencode(
+        {"sysparm_query": f"update_set={us}", "sysparm_fields": "sys_id", "sysparm_limit": 5000})))
+
+
+def ck_from(html):
+    """SCAR (2026-08-03): narrow patterns here cost a failed publish that LOOKED like a failed login.
+
+    The login itself was fine — session cookies were set — but `/login.do`'s own body carries the
+    token as `g_ck = '...'` (SINGLE quotes) while the post-login pages emit other shapes entirely,
+    so a two-pattern scrape returned the PRE-login token or nothing and the script reported
+    "login did not yield a session token". Match loosely, and never trust a token scraped from the
+    login page itself — see login().
+    """
+    for pat in (r'"g_ck"\s*:\s*"([0-9a-zA-Z]{24,})"',
+                r'''g_ck\s*=\s*['"]([0-9a-zA-Z]{24,})['"]''',
+                r'name="sysparm_ck"\s+value="([0-9a-zA-Z]{24,})"',
+                r'''g_ck["\s:=]+['"]?([0-9a-zA-Z]{24,})'''):
+        m = re.search(pat, html)
+        if m:
+            return m.group(1)
+
+
+def login():
+    """A REAL login (house invariant: no keep-alive simulation — this is a genuine sign-in).
+
+    The token MUST come from an authenticated page fetched after the POST, not from the login
+    response: `/login.do` answers 200 and redirects to `login_redirect.do`, whose body carries no
+    usable token at all. `/navpage.do` reliably does.
+    """
+    pre = OP.open(f"{INST}/login.do").read().decode(errors="replace")
+    body = urllib.parse.urlencode({"user_name": USER, "user_password": PW,
+                                   "sys_action": "sysverb_login",
+                                   "sysparm_ck": ck_from(pre) or ""}).encode()
+    OP.open(urllib.request.Request(
+        f"{INST}/login.do", data=body,
+        headers={"Content-Type": "application/x-www-form-urlencoded"})).read()
+
+    for path in ("/navpage.do", "/nav_to.do?uri=sys_app.do", "/home.do"):
+        ck = ck_from(OP.open(f"{INST}{path}").read().decode(errors="replace"))
+        if ck:
+            return ck
+    sys.exit("sn-publish: authenticated but no session token on any UI page — re-probe /navpage.do")
+
+
+def main():
+    args = sys.argv[1:]
+    include_data = "--include-data" in args
+    if args.count("--include-data") > 1:
+        sys.exit(__doc__.split("Usage:")[1])
+    args = [arg for arg in args if arg != "--include-data"]
+    if len(args) != 3:
+        sys.exit(__doc__.split("Usage:")[1])
+
+    app = args[0]
+    if args[1] == "--new":
+        name = args[2]
+        us = rest("POST", "/api/now/table/sys_update_set?sysparm_fields=sys_id", {"name": name})["sys_id"]
+        print(f"created update set {us}")
+    else:
+        us, name = args[1], args[2]
+
+    before = rows_in(us)
+    print(f"rows before publish: {before}")
+    print(f"include data: {'yes' if include_data else 'no'}")
+    if before:
+        print("WARNING: the set is not empty — publish appends, and a mixed set is not a clean deliverable")
+
+    ck = login()
+    params = {"sysparm_processor": "com.snc.apps.AppsAjaxProcessor", "sysparm_scope": "global",
+              "sysparm_want_session_messages": "true", "sysparm_function": "publishToUpdateSet",
+              "sysparm_sys_id": app, "sysparm_update_set_id": us, "sysparm_name": name,
+              "sysparm_version": "1.0.0", "sysparm_description": name,
+              "sysparm_include_data": "true" if include_data else "false", "sysparm_ck": ck}
+    req = urllib.request.Request(f"{INST}/xmlhttp.do", data=urllib.parse.urlencode(params).encode(),
+                                 headers={"Content-Type": "application/x-www-form-urlencoded",
+                                          "X-UserToken": ck, "X-Requested-With": "XMLHttpRequest"})
+    out = OP.open(req).read().decode(errors="replace")
+    m = re.search(r'<workerid>([0-9a-f]{32})</workerid>', out)
+    if not m:
+        sys.exit(f"sn-publish: no worker id in response — {out[:300]}")
+    wid = m.group(1)
+    print(f"progress worker: {wid}")
+
+    # A publish that errors, is cancelled, or never finishes must NOT print a success-shaped
+    # summary. This script exists because the platform reports success over broken state; it does
+    # not get to commit the same sin. Track the terminal state and fail loudly on anything but
+    # `complete`.
+    final = None
+    for i in range(120):
+        w = rest("GET", f"/api/now/table/sys_progress_worker?sysparm_query=sys_id={wid}"
+                        "&sysparm_fields=state,state_code,message")
+        st = w[0] if w else {}
+        print(f"  [{i*5:>4}s] {st.get('state','?'):<10} {st.get('state_code','')} "
+              f"{str(st.get('message',''))[:70]}")
+        if st.get("state") in ("complete", "cancelled", "error"):
+            final = st
+            break
+        time.sleep(5)
+
+    after = rows_in(us)
+    s = rest("GET", f"/api/now/table/sys_update_set?sysparm_query=sys_id={us}&sysparm_fields=name,state")[0]
+    print(f"\nSET   : {s['name']}\nstate : {s['state']}\nrows  : {after}  (+{after - before})")
+
+    if final is None:
+        sys.exit(f"\nFAILED: progress worker {wid} never reached a terminal state after 600s. "
+                 f"The set above may be partial. Do NOT treat it as a deliverable — inspect "
+                 f"sys_progress_worker and sys_update_xml before doing anything else.")
+    if final.get("state") != "complete":
+        sys.exit(f"\nFAILED: publish ended in state '{final.get('state')}' "
+                 f"({final.get('state_code','')}) — {str(final.get('message',''))[:200]}\n"
+                 f"The set above is NOT a deliverable.")
+    if after == before:
+        sys.exit(f"\nFAILED: worker reported complete but the set gained 0 rows. "
+                 f"Publish copies what is INSTALLED — verify the app actually installed its "
+                 f"artifacts (global scope silently discards dictionary columns lacking `u_`).")
+
+    print("\nNow VERIFY: count each artifact class against what you built, COUNT DATA ROWS "
+          "SEPARATELY (footgun 7), and read the table's dictionary columns back — publish copies "
+          "what is INSTALLED, not what is BUILT.")
+
+
+if __name__ == "__main__":
+    main()

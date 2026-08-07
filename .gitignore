@@ -1,0 +1,32 @@
+# Local docs clone (~400MB). Cloned on request by the `/sn-init` SKILL (the agent, not the
+# script — scripts/sn-init never clones). Refresh: `git -C vendor/ServiceNowDocs pull`.
+vendor/
+
+# SDK build artifacts — regenerate with `now-sdk build`.
+# Fluent projects are not only under apps/: the loop builds in place under
+# enhancements/<number>/, and one of those was 544MB of node_modules. Match anywhere.
+**/node_modules/
+**/dist/
+**/target/
+**/.npm-cache/
+
+# Evidence that is large or binary: screenshots and terminal recordings are part of a
+# package's evidence manifest but are not versioned. The package file records their
+# names and sizes.
+**/evidence/*.png
+**/evidence/*.cast
+**/evidence/*.mov
+
+# Documents the requester attached to the ticket. The loop downloads them here and reads
+# them; they belong to the business unit that sent them, not to this repo. Read in place,
+# never commit. This is the recipient's confidential material, not ours.
+**/handoff-in/
+
+# Never. Credentials live in ~/.snpdi/env, outside the repo entirely.
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+.snpdi

@@ -1,0 +1,612 @@
+#!/usr/bin/env python3
+"""sn-init — wire a MACHINE and a ServiceNow developer instance for the AI development loop.
+
+Two halves, in order, because both have to be true before the loop can finish an enhancement:
+  1. the ENVIRONMENT on this machine  — node, the ServiceNow SDK, and the SDK's own credential
+  2. the INSTANCE                     — REST auth, ATF runner, intake table, request form
+
+The environment is a GATE, not a warning list. A green instance on a machine that cannot build
+is a trap: the gap surfaces at BUILD, hours in, after a human has already approved a spec.
+If the environment fails, the instance is not contacted at all.
+
+Idempotent by construction: every step reads before it writes and re-runs clean.
+Nothing here is destructive. It REFUSES any host that is not `https://dev<n>.service-now.com`
+unless `SN_ALLOW_NONDEV=1` is set — the production guard is a check, not a promise.
+
+    ./scripts/sn-init                 # full wiring + report
+    ./scripts/sn-init --check         # read-only: report state, change nothing
+    ./scripts/sn-init --install       # also install the ServiceNow SDK (npm global)
+    ./scripts/sn-init --no-build      # skip node/SDK; read-only lanes only
+    ./scripts/sn-init --table u_x_enh # override the intake table name
+
+What gets installed FOR you: the ServiceNow SDK, and only with --install.
+What never does: node. How node arrives on a machine (brew, nvm, distro, corporate image)
+is the machine's business, and stomping it breaks managed laptops. We detect and instruct.
+
+Reads credentials from ~/.snpdi/env (never printed, never logged):
+    SN_INSTANCE=https://devXXXXXX.service-now.com
+    SN_USER=admin
+    SN_PASS=...
+"""
+
+import argparse
+import base64
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ENV_PATH = os.path.expanduser("~/.snpdi/env")
+DEFAULT_TABLE = "u_sn_enhancement"
+NODE_MIN = (20, 18)
+SDK_PKG = "@servicenow/sdk"
+
+OK, WARN, BAD, INFO = "  OK ", " WARN", " FAIL", "  ->"
+_results = []
+
+
+def say(tag, msg):
+    print(f"[{tag}] {msg}", flush=True)
+    if tag in (OK, WARN, BAD):
+        _results.append((tag, msg))
+
+
+class SN:
+    def __init__(self, instance, user, password):
+        self.instance = instance.rstrip("/")
+        self.auth = base64.b64encode(f"{user}:{password}".encode()).decode()
+
+    def call(self, method, path, body=None, ctype="application/json"):
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(self.instance + path, method=method, data=data)
+        req.add_header("Authorization", "Basic " + self.auth)
+        req.add_header("Accept", "application/json")
+        if data:
+            req.add_header("Content-Type", ctype)
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                raw = r.read()
+                return r.status, (json.loads(raw) if raw else {})
+        except urllib.error.HTTPError as e:
+            raw = e.read()
+            try:
+                return e.code, json.loads(raw)
+            except Exception:
+                return e.code, {"raw": raw[:400].decode("utf-8", "replace")}
+
+    def get(self, table, query=None, fields=None, limit=None):
+        p = f"/api/now/table/{table}"
+        qs = {}
+        if query:
+            qs["sysparm_query"] = query
+        if fields:
+            qs["sysparm_fields"] = fields
+        if limit:
+            qs["sysparm_limit"] = str(limit)
+        if qs:
+            p += "?" + urllib.parse.urlencode(qs)
+        st, body = self.call("GET", p)
+        return st, body.get("result", [])
+
+    def post(self, table, payload):
+        st, body = self.call("POST", f"/api/now/table/{table}", payload)
+        return st, body.get("result", {})
+
+    def patch(self, table, sys_id, payload):
+        st, body = self.call("PATCH", f"/api/now/table/{table}/{sys_id}", payload)
+        return st, body.get("result", {})
+
+    def ensure(self, table, key_query, payload, label):
+        """Insert-or-patch on a natural key. Returns (sys_id, created_bool)."""
+        st, rows = self.get(table, key_query, "sys_id", 1)
+        if st == 200 and rows:
+            sys_id = rows[0]["sys_id"]
+            # INVARIANT 3: the PATCH status is evidence, not decoration. Reporting
+            # "converged" without reading it is this product's own thesis violated in
+            # the one function that writes on every step.
+            pst, _ = self.patch(table, sys_id, payload)
+            if pst not in (200, 201):
+                say(BAD, f"{label} — PATCH returned HTTP {pst}, NOT converged ({sys_id})")
+                return sys_id, False
+            say(OK, f"{label} — present, converged ({sys_id})")
+            return sys_id, False
+        st, rec = self.post(table, payload)
+        if st in (200, 201) and rec.get("sys_id"):
+            say(OK, f"{label} — created ({rec['sys_id']})")
+            return rec["sys_id"], True
+        say(BAD, f"{label} — insert failed HTTP {st}: {str(rec)[:200]}")
+        return None, False
+
+
+# ---------------------------------------------------------- step 1: environment
+#
+# WHY THIS IS A GATE AND NOT A WARNING LIST:
+# the loop's BUILD state authors in Fluent and needs node + the ServiceNow SDK. If those
+# are merely "warned" about here, sn-init reports a green instance to someone whose
+# machine cannot build, and the gap surfaces hours later, mid-enhancement, after a human
+# has already approved a spec at Gate 1. The environment is part of the wiring, so it is
+# checked with the same seriousness as the instance — and this step can install the one
+# piece it can install deterministically.
+#
+# What we install vs. what we hand back:
+#   - the SDK is an npm global; `npm i -g` is deterministic and safe to run for someone.
+#   - node itself is NOT installed for you. Every machine has an opinion about how node
+#     arrives (brew, nvm, distro package, corporate image) and stomping that is rude at
+#     best and breaks a managed laptop at worst. We detect, we tell you the command for
+#     your platform, we stop.
+
+def _version_tuple(s):
+    nums = re.findall(r"\d+", s or "")
+    return tuple(int(n) for n in nums[:2]) if len(nums) >= 2 else (0, 0)
+
+
+def _node_install_hint():
+    if sys.platform == "darwin":
+        return "brew install node   — or the LTS installer at https://nodejs.org"
+    if sys.platform.startswith("linux"):
+        return ("your distribution's package manager (or nvm, if you manage node versions) "
+                "— LTS packages at https://nodejs.org/en/download")
+    return "the LTS installer at https://nodejs.org"
+
+
+def _tool_version(cmd):
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        return (r.stdout or r.stderr).strip().splitlines()[0] if (r.stdout or r.stderr) else ""
+    except Exception:
+        return ""
+
+
+def step_environment(do_install=False, need_build=True):
+    print("\n=== 1. ENVIRONMENT ===")
+    ok = True
+
+    for tool, why in {
+        "python3": "this script",
+        "curl": "smoke probes",
+        "git": "the repo, and the docs clone",
+    }.items():
+        if shutil.which(tool):
+            say(OK, tool)
+        else:
+            say(BAD, f"{tool} MISSING — required for {why}")
+            ok = False
+
+    if not need_build:
+        say(WARN, "--no-build: skipping node/SDK checks. /sn-map and TALK-STORY work; "
+                  "the loop CANNOT reach BUILD or PACKAGE on this machine.")
+        return ok
+
+    # --- node ---------------------------------------------------------------
+    node_ok = False
+    if shutil.which("node"):
+        v = _tool_version(["node", "-v"])
+        if _version_tuple(v) >= NODE_MIN:
+            say(OK, f"node {v}")
+            node_ok = True
+        else:
+            say(BAD, f"node {v} is below {NODE_MIN[0]}.{NODE_MIN[1]} — the SDK will fail on it")
+            print(f"{INFO} Upgrade node with: {_node_install_hint()}")
+            ok = False
+    else:
+        say(BAD, "node MISSING — the loop cannot author or build without it")
+        print(f"{INFO} Install node ({NODE_MIN[0]}.{NODE_MIN[1]}+) with: {_node_install_hint()}")
+        print(f"{INFO} node is NOT installed for you — how node arrives on a machine is the "
+              f"machine's business. Install it, then re-run this script.")
+        ok = False
+
+    if not shutil.which("npm"):
+        say(BAD, "npm MISSING — needed to install the ServiceNow SDK")
+        ok = False
+        return ok
+
+    # --- the SDK: the one thing we will install ------------------------------
+    if shutil.which("now-sdk"):
+        say(OK, f"now-sdk {_tool_version(['now-sdk', '--version'])}")
+    elif not node_ok:
+        say(BAD, f"now-sdk MISSING — install node first, then: npm i -g {SDK_PKG}")
+        ok = False
+    elif do_install:
+        print(f"{INFO} installing {SDK_PKG} globally (this is the one thing sn-init installs)...")
+        r = subprocess.run(["npm", "install", "-g", SDK_PKG], text=True)
+        if r.returncode == 0 and shutil.which("now-sdk"):
+            say(OK, f"now-sdk {_tool_version(['now-sdk', '--version'])} — installed just now")
+        else:
+            say(BAD, f"npm i -g {SDK_PKG} failed (exit {r.returncode}) — install it by hand")
+            print(f"{INFO} A global npm install needing sudo is the usual cause. Either fix the "
+                  f"npm prefix (npm config set prefix ~/.npm-global) or use a node version manager.")
+            ok = False
+    else:
+        say(BAD, f"now-sdk MISSING — run: npm i -g {SDK_PKG}   (or re-run: sn-init --install)")
+        ok = False
+
+    return ok
+
+
+# ------------------------------------------------------------ step 2: creds
+def load_creds():
+    print("\n=== 2. CREDENTIALS ===")
+    if not os.path.exists(ENV_PATH):
+        say(BAD, f"{ENV_PATH} not found")
+        print(f"""
+{INFO} Create it (the file lives OUTSIDE this repo and is never committed):
+
+    mkdir -p ~/.snpdi && chmod 700 ~/.snpdi
+    cat > ~/.snpdi/env <<'EOF'
+    SN_INSTANCE=https://devXXXXXX.service-now.com
+    SN_USER=admin
+    SN_PASS=your-instance-admin-password
+    EOF
+    chmod 600 ~/.snpdi/env
+
+   Get a free instance at developer.servicenow.com -> Manage -> Instances -> Request.
+""")
+        return None
+    mode = oct(os.stat(ENV_PATH).st_mode)[-3:]
+    if mode != "600":
+        say(WARN, f"{ENV_PATH} is mode {mode} — run: chmod 600 {ENV_PATH}")
+    env = {}
+    with open(ENV_PATH) as f:
+        for line in f:
+            line = line.strip().removeprefix("export ").strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                env[k.strip()] = v.strip().strip('"').strip("'")
+    missing = [k for k in ("SN_INSTANCE", "SN_USER", "SN_PASS") if not env.get(k)]
+    if missing:
+        say(BAD, f"{ENV_PATH} is missing: {', '.join(missing)}")
+        return None
+
+    # INVARIANT 1 was a promise, not a check. This script CREATES a table, dictionary
+    # columns, choice rows, a catalog category, a record producer, and flips a system
+    # property — against whatever host SN_INSTANCE names. Pasting a production URL into
+    # ~/.snpdi/env is the single most likely first-day mistake and the only one that is
+    # not recoverable. So the promise is now enforced.
+    inst = env["SN_INSTANCE"].rstrip("/")
+    if not inst.startswith("https://"):
+        say(BAD, f"SN_INSTANCE is not https:// — refusing (basic-auth credentials would "
+                 f"cross the wire in cleartext): {inst}")
+        return None
+    host = inst.split("://", 1)[1].split("/")[0]
+    if not re.fullmatch(r"dev\d+\.service-now\.com", host, re.I):
+        if os.environ.get("SN_ALLOW_NONDEV") == "1":
+            say(WARN, f"{host} is not a dev*.service-now.com instance — proceeding only "
+                      f"because SN_ALLOW_NONDEV=1 is set. You own this decision.")
+        else:
+            say(BAD, f"{host} does not look like a developer instance")
+            print(f"""
+{INFO} This rig is for DEVELOPER INSTANCES ONLY. It creates tables, columns, choice
+   lists, a catalog category and a record producer, and it flips `sn_atf.runner.enabled`.
+   None of that belongs on a production or shared instance.
+
+   Expected a host matching  dev<digits>.service-now.com
+   Got                       {host}
+
+   If this genuinely is a disposable non-production instance (a PDI with a vanity host,
+   or a sandbox you own), re-run with:  SN_ALLOW_NONDEV=1 ./scripts/sn-init
+""")
+            return None
+    say(OK, f"credentials loaded — instance {inst}, user {env['SN_USER']}")
+    env["SN_INSTANCE"] = inst
+    return env
+
+
+# ------------------------------------------------------- step 3: auth + release
+def step_auth(sn):
+    print("\n=== 3. REST AUTH + RELEASE ===")
+    st, rows = sn.get("sys_properties", "nameINglide.buildname,instance_name", "name,value")
+    if st == 401:
+        say(BAD, "REST returned 401 — almost certainly the basic-auth restriction, not your password")
+        print(f"""
+{INFO} Fresh instances ship `glide.authenticate.basic_auth.restriction.enforce=true`.
+   REST basic auth then 401s for any account WITHOUT the allow-list role, while UI
+   login keeps working — which makes it look like a password problem. It is not.
+
+   Fix (30 seconds, in the instance UI, as admin):
+     All -> User Administration -> Users -> {os.environ.get('SN_USER', 'your api user')}
+     -> Roles -> Edit -> add  snc_basic_auth_api_access  -> Save
+
+   Then re-run this script. Every future per-agent API user needs that role too.
+""")
+        return None
+    if st == 502:
+        say(BAD, "HTTP 502 — the instance is hibernating (REST traffic does NOT wake it)")
+        print(f"""
+{INFO} Sign in at developer.servicenow.com -> Manage instance -> Refresh, then wait.
+   Wake takes up to ~45 min and FLAPS (bursts of 200 between 502s), so treat it as
+   up only after 6 consecutive 200s at 15s spacing.
+""")
+        return None
+    if st != 200:
+        say(BAD, f"unexpected HTTP {st} from the Table API: {str(rows)[:200]}")
+        return None
+    props = {r["name"]: r["value"] for r in rows}
+    say(OK, f"REST authenticated — instance {props.get('instance_name', '?')}")
+    # Release name: NOT reliably exposed as a property. `glide.buildname` is absent on a
+    # fresh Australia instance (verified 2026-08-05) even though it is widely cited, and
+    # sys_upgrade_history carries app versions, not the family name. So: report it when a
+    # candidate resolves, stay silent when none does — never print a fake "?".
+    build = next((props[k] for k in ("glide.buildname", "glide.war") if props.get(k)), None)
+    if build:
+        say(OK, f"release {build}")
+        if build.lower().split("-")[0] in ("tokyo", "utah", "vancouver", "washingtondc", "xanadu", "yokohama"):
+            say(WARN, f"release {build} predates Zurich — the SDK needs Zurich+; Lane A may not work")
+    else:
+        say(OK, "release name not exposed as a property here (normal) — `now-sdk` will tell you if it is too old")
+    return props.get("instance_name", "instance")
+
+
+# ------------------------------------------- step 3b: SDK auth profile (Lane A)
+#
+# The SDK keeps its OWN credential store, entirely separate from ~/.snpdi/env. REST can be
+# perfectly authenticated (step 3 green) while `now-sdk install` still has nowhere to send
+# an app — two different auth systems, one instance. Checked here because the failure
+# otherwise lands at BUILD, which is after a human has approved a spec.
+def step_sdk_auth(env, need_build=True):
+    print("\n=== 3b. SDK AUTH PROFILE (Lane A) ===")
+    if not need_build:
+        say(WARN, "--no-build: SDK auth profile not checked")
+        return
+    if not shutil.which("now-sdk"):
+        say(BAD, "now-sdk not installed — see step 1; Lane A (build/install) is unavailable")
+        return
+
+    host = env["SN_INSTANCE"].rstrip("/")
+    bare = host.split("://")[-1].strip("/")
+    try:
+        r = subprocess.run(["now-sdk", "auth", "--list"], capture_output=True, text=True, timeout=120)
+        out = (r.stdout or "") + (r.stderr or "")
+    except Exception as e:
+        say(WARN, f"could not run `now-sdk auth --list` ({e}) — verify Lane A by hand")
+        return
+
+    if bare in out:
+        say(OK, f"SDK credential present for {bare}")
+        return
+
+    say(BAD, f"no SDK credential for {bare} — `now-sdk install` will have nowhere to deliver")
+    print(f"""
+{INFO} Add one (interactive — it prompts for the password; nothing is written by this script):
+
+    now-sdk auth --add {host} --type basic --alias pdi
+
+   This is a SEPARATE credential store from ~/.snpdi/env. REST auth passing above does not
+   imply the SDK is authenticated; they are two different systems pointed at one instance.
+""")
+
+
+# ------------------------------------------------------------- step 4: ATF
+def step_atf(sn, check):
+    print("\n=== 4. AUTOMATED TEST FRAMEWORK ===")
+    st, rows = sn.get("sys_properties", "name=sn_atf.runner.enabled", "sys_id,value", 1)
+    if st != 200 or not rows:
+        say(WARN, "sn_atf.runner.enabled property not found — ATF may not be installed")
+        return
+    if rows[0]["value"] == "true":
+        say(OK, "ATF runner already enabled")
+        return
+    if check:
+        say(WARN, "ATF runner DISABLED (ships disabled on a fresh instance) — would enable")
+        return
+    sn.patch("sys_properties", rows[0]["sys_id"], {"value": "true"})
+    st, rows = sn.get("sys_properties", "name=sn_atf.runner.enabled", "value", 1)
+    if rows and rows[0]["value"] == "true":
+        say(OK, "ATF runner ENABLED (read back) — headless test runs are now possible")
+    else:
+        say(BAD, "failed to enable the ATF runner")
+
+
+# -------------------------------------------------------- step 5: intake table
+PHASES = [
+    ("intake", "1 Intake"), ("talk_story", "2 Talk-story"), ("spec", "3 Spec"),
+    ("build", "4 Build"), ("package_verify", "5 Package + verify"),
+    ("review", "6 Review"), ("closed", "7 Closed"),
+]
+# `changes_requested` is load-bearing, not decorative: loop.md's state model routes a
+# "changes requested" outcome back to the state whose artifact must change. Without the
+# choice row, writing it returns HTTP 200 and leaves the field at `pending` — this
+# product's own flagship silent-discard scar, firing on the gate that carries authority.
+GATE1 = [("pending", "Pending"), ("approved", "Approved"),
+         ("changes_requested", "Changes requested"), ("rejected", "Rejected")]
+GATE2 = [("not_reached", "Not reached"), ("promoted", "Promoted"), ("rejected", "Rejected")]
+
+COLUMNS = [
+    ("u_requested_outcome", "Requested outcome", "string", 8000, None),
+    ("u_phase", "Phase", "string", 40, "intake"),
+    ("u_gate_1_decision", "Gate 1 decision", "string", 40, "pending"),
+    ("u_gate_2_decision", "Gate 2 decision", "string", 40, "not_reached"),
+    ("u_package_name", "Package name", "string", 80, None),
+    ("u_repo_path", "Repo path", "string", 255, None),
+    ("u_evidence_summary", "Evidence summary", "string", 4000, None),
+]
+
+
+def step_intake(sn, table, check):
+    print("\n=== 5. INTAKE SURFACE ===")
+    st, rows = sn.get("sys_db_object", f"name={table}", "sys_id,super_class", 1)
+    exists = st == 200 and bool(rows)
+
+    if check:
+        say(OK if exists else WARN, f"intake table {table} — {'present' if exists else 'ABSENT (would create)'}")
+        if exists:
+            _, cols = sn.get("sys_dictionary", f"name={table}^elementISNOTEMPTY", "element")
+            say(OK, f"  {len(cols)} custom columns present")
+        return exists
+
+    if not exists:
+        st, task = sn.get("sys_db_object", "name=task", "sys_id", 1)
+        if st != 200 or not task:
+            say(BAD, "could not resolve the `task` table — cannot create the intake table")
+            return False
+        st, rec = sn.post("sys_db_object", {
+            "name": table, "label": "AI Enhancement", "super_class": task[0]["sys_id"],
+            "sys_scope": "global", "create_access": "true", "read_access": "true",
+            "update_access": "true", "number_ref": "",
+        })
+        if st not in (200, 201):
+            say(BAD, f"table create failed HTTP {st}: {str(rec)[:300]}")
+            return False
+        say(OK, f"table {table} created ({rec['sys_id']}) — extends task")
+
+    # Columns. GLOBAL SCOPE SILENTLY DISCARDS ANY COLUMN WITHOUT A u_ PREFIX:
+    # the insert returns 201 and creates nothing. Read the dictionary back and count.
+    for name, label, ctype, length, default in COLUMNS:
+        payload = {
+            "name": table, "element": name, "column_label": label,
+            "internal_type": ctype, "max_length": str(length), "active": "true",
+        }
+        if default:
+            payload["default_value"] = default
+        sn.ensure("sys_dictionary", f"name={table}^element={name}", payload, f"  column {name}")
+
+    _, cols = sn.get("sys_dictionary", f"name={table}^elementISNOTEMPTY^elementSTARTSWITHu_", "element")
+    got = {c["element"] for c in cols}
+    want = {c[0] for c in COLUMNS}
+    if want <= got:
+        say(OK, f"  dictionary read-back: {len(want)}/{len(want)} columns present")
+    else:
+        say(BAD, f"  dictionary read-back: MISSING {sorted(want - got)} — global scope discarded them")
+        return False
+
+    # NOT DONE HERE: a per-table number prefix (records file as TASK00…, which is correct
+    # but generic). `sys_number` REFUSES a REST insert — HTTP 403 with an EMPTY body — and the
+    # sysauto_script + sys_trigger escalation did NOT fire on a PDI (verified 2026-08-05: job
+    # active, trigger queued Ready at a past next_action, scheduler demonstrably running other
+    # jobs, no execution after 40s and no gs.log output). Add the prefix by hand in the UI if
+    # you want one: System Definition -> Number Maintenance -> New.
+
+    # Choice lists. A value that is not an ACTIVE sys_choice is silently discarded
+    # on write (HTTP 200, field keeps its old value), so these must exist.
+    for element, choices in (("u_phase", PHASES), ("u_gate_1_decision", GATE1), ("u_gate_2_decision", GATE2)):
+        for seq, (value, label) in enumerate(choices):
+            sn.ensure("sys_choice",
+                      f"name={table}^element={element}^value={value}^language=en",
+                      {"name": table, "element": element, "value": value, "label": label,
+                       "sequence": str(seq * 10), "language": "en", "inactive": "false"},
+                      f"  choice {element}={value}")
+    return True
+
+
+# --------------------------------------------------- step 6: the record producer
+def step_producer(sn, table, check):
+    print("\n=== 6. REQUEST FORM (record producer) ===")
+    if check:
+        st, rows = sn.get("sc_cat_item_producer", "name=Request an enhancement", "sys_id", 1)
+        say(OK if rows else WARN, f"record producer — {'present' if rows else 'ABSENT (would create)'}")
+        return
+
+    st, cat = sn.get("sc_catalog", "title=Service Catalog", "sys_id", 1)
+    if not cat:
+        st, cat = sn.get("sc_catalog", "", "sys_id", 1)
+    if not cat:
+        say(WARN, "no service catalog found — skipping the request form (the table still works)")
+        return
+    catalog_id = cat[0]["sys_id"]
+
+    cat_id, _ = sn.ensure("sc_category", f"title=AI Development^sc_catalog={catalog_id}",
+                          {"title": "AI Development", "sc_catalog": catalog_id,
+                           "description": "Enhancements worked by the AI development loop."},
+                          "  category 'AI Development'")
+
+    # SCAR: sc_cat_item_producer.table_name is a STRING holding a table NAME. Passing a
+    # sys_id here makes every submit die as an EMPTY HTTP 500 (root cause only in syslog).
+    prod_id, _ = sn.ensure("sc_cat_item_producer", "name=Request an enhancement",
+                           {"name": "Request an enhancement", "table_name": table,
+                            "sc_catalogs": catalog_id, "category": cat_id or "",
+                            "active": "true", "short_description":
+                            "Describe the outcome you need. The AI development loop picks it up from here.",
+                            "description":
+                            "Filed enhancements are worked to the next human gate: diagnosis, then a "
+                            "build spec for review (Gate 1), then the built + tested artifact set for "
+                            "promotion (Gate 2). Attach any current-state documents.",
+                            },
+                           "  record producer 'Request an enhancement'")
+    if not prod_id:
+        return
+
+    # Variables map to same-named fields automatically on a record producer.
+    for order, (name, label, vtype, help_text) in enumerate([
+        ("short_description", "One line: what do you need?", "6",
+         "A single sentence. Example: Change freeze calendar for our platforms."),
+        ("u_requested_outcome", "Describe the outcome", "2",
+         "What must be true when this is done, the rules it has to follow, and anything "
+         "explicitly out of scope. Write it the way you would explain it to a colleague."),
+    ], start=1):
+        sn.ensure("item_option_new", f"cat_item={prod_id}^name={name}",
+                  {"cat_item": prod_id, "name": name, "question_text": label,
+                   "type": vtype, "mandatory": "true", "order": str(order * 100),
+                   "help_text": help_text},
+                  f"  variable {name}")
+
+    st, rows = sn.get("sc_cat_item_producer", f"sys_id={prod_id}", "table_name,active", 1)
+    if rows and rows[0].get("table_name") == table:
+        say(OK, f"  read-back: producer targets {table}, active={rows[0].get('active')}")
+    else:
+        say(BAD, f"  read-back FAILED: producer table_name is {rows[0].get('table_name') if rows else '?'}")
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        description="Wire a machine AND a ServiceNow developer instance for the AI loop.")
+    ap.add_argument("--check", action="store_true", help="read-only: report state, change nothing")
+    ap.add_argument("--install", action="store_true",
+                    help="install what can be installed safely (the ServiceNow SDK, via npm). "
+                         "node is never installed for you.")
+    ap.add_argument("--no-build", action="store_true",
+                    help="skip node/SDK checks. /sn-map and TALK-STORY work; the loop cannot "
+                         "reach BUILD or PACKAGE without them.")
+    ap.add_argument("--table", default=DEFAULT_TABLE, help=f"intake table name (default {DEFAULT_TABLE})")
+    args = ap.parse_args()
+    need_build = not args.no_build
+
+    print("sn-init — wiring a machine and a ServiceNow developer instance for the AI loop")
+    print("=" * 78)
+    if args.check:
+        print("MODE: --check (read-only; --install is ignored)")
+
+    if not step_environment(do_install=args.install and not args.check, need_build=need_build):
+        print("\n" + "=" * 78)
+        print("RESULT: the ENVIRONMENT is not ready. The instance was not contacted.")
+        print("Fix the failures above, then re-run. `sn-init --install` will install the SDK")
+        print("for you once node is present; node itself is yours to install.")
+        return 1
+    env = load_creds()
+    if not env:
+        return 1
+    sn = SN(env["SN_INSTANCE"], env["SN_USER"], env["SN_PASS"])
+    if not step_auth(sn):
+        return 1
+    step_sdk_auth(env, need_build=need_build)
+    step_atf(sn, args.check)
+    if step_intake(sn, args.table, args.check) or args.check:
+        step_producer(sn, args.table, args.check)
+
+    print("\n" + "=" * 78)
+    bad = [m for t, m in _results if t == BAD]
+    warn = [m for t, m in _results if t == WARN]
+    if bad:
+        print(f"RESULT: {len(bad)} FAILURE(S) — the instance is NOT ready:")
+        for m in bad:
+            print(f"  - {m}")
+        return 1
+    print(f"RESULT: instance wired. {len(_results) - len(warn)} checks passed, {len(warn)} warning(s).")
+    for m in warn:
+        print(f"  warn: {m}")
+    print(f"""
+Next:
+  1. Open the instance -> Self-Service -> Service Catalog -> AI Development
+     -> 'Request an enhancement', and file one. (Or use any other intake you prefer;
+     the loop reads the {args.table} table.)
+  2. In this folder, run Claude Code and say:  /sn-map      (learn the instance)
+  3. Then:                                     /sn-loop     (work the queue)
+""")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

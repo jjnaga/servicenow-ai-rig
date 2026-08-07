@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+# sn — Lane B REST wrapper for the PDI rig. Creds: ~/.snpdi/env (chmod 600, outside repo).
+#
+# INVARIANT (domain CLAUDE.md #1): allowlist of one — this script talks ONLY to
+# $SN_INSTANCE. Paths must be instance-relative (/api/...); full URLs are refused.
+#
+# Auth reality (verified 2026-08-01, Australia release): fresh PDIs ENFORCE the
+# basic-auth restriction (glide.authenticate.basic_auth.restriction.enforce=true).
+# Basic auth works only for accounts holding the allow-list role
+# `snc_basic_auth_api_access` — granted to admin at wire time. Any future
+# per-agent API user needs the same role.
+#
+# Proven recipes hardened here (Phase 0, 2026-08-01):
+#   - update-set capture via sys_user_preference (name=sys_update_set) — VERIFIED
+#   - hierarchy-aware introspection (fields defined on parent tables) — VERIFIED
+#   - CI/CD API active by default on fresh PDI — VERIFIED
+set -euo pipefail
+
+ENV_FILE="$HOME/.snpdi/env"
+[ -f "$ENV_FILE" ] || { echo "sn: $ENV_FILE missing — drop PDI creds first (see domain CLAUDE.md)" >&2; exit 1; }
+# shellcheck disable=SC1090
+source "$ENV_FILE"
+
+# Credentials reach curl through a config file on STDIN, never through argv.
+# `curl -u user:pass` puts the instance password in the process argument list, where
+# any other account on the box can read it out of `ps` for the life of the call — the
+# same class of exposure as echoing it to a log, which CLAUDE.md INVARIANT 2 forbids.
+# curl's -K format is `key = "value"`, so backslashes and quotes must be escaped.
+curl_cfg() {
+  local esc_u esc_p
+  esc_u=$(printf '%s' "$SN_USER" | sed 's/\\/\\\\/g; s/"/\\"/g')
+  esc_p=$(printf '%s' "$SN_PASS" | sed 's/\\/\\\\/g; s/"/\\"/g')
+  printf 'user = "%s:%s"\n' "$esc_u" "$esc_p"
+}
+
+api() { # api METHOD /path [json-body]
+  local m="$1" p="$2" d="${3:-}"
+  case "$p" in /*) ;; *) echo "sn: path must start with / (instance-relative only)" >&2; exit 1;; esac
+  if [ -n "$d" ]; then
+    curl_cfg | curl -s --max-time 60 -K - -X "$m" \
+      -H 'Content-Type: application/json' -H 'Accept: application/json' \
+      -d "$d" "$SN_INSTANCE$p"
+  else
+    curl_cfg | curl -s --max-time 60 -K - -X "$m" \
+      -H 'Accept: application/json' "$SN_INSTANCE$p"
+  fi
+}
+
+jsonpp() { python3 -c "import json,sys; print(json.dumps(json.load(sys.stdin), indent=1))"; }
+
+admin_sys_id() {
+  api GET "/api/now/table/sys_user?sysparm_query=user_name=$SN_USER&sysparm_fields=sys_id" \
+    | python3 -c "import json,sys; print(json.load(sys.stdin)['result'][0]['sys_id'])"
+}
+
+table_chain() { # table_chain <table> -> comma list incl. all parents (for sys_dictionary lookups)
+  python3 - "$1" <<'PYEOF'
+import json, sys, subprocess, os
+t = sys.argv[1]; chain = [t]
+while t:
+    out = subprocess.run([os.environ['SN_SELF'], 'get',
+        f"/api/now/table/sys_db_object?sysparm_query=name={t}&sysparm_fields=super_class.name"],
+        capture_output=True, text=True).stdout
+    try:
+        r = json.loads(out)['result']
+    except Exception:
+        break
+    t = r[0].get('super_class.name') if r else None
+    if t: chain.append(t)
+print(','.join(chain))
+PYEOF
+}
+
+case "${1:-help}" in
+  get|post|patch|put|delete) # sn get "/api/now/table/<t>?sysparm_query=..." — raw REST, instance-relative path
+    m=$(echo "$1" | tr '[:lower:]' '[:upper:]'); shift
+    api "$m" "$@" | jsonpp ;;
+  smoke)  # auth probe — confirms REST reaches the instance as $SN_USER; NON-ZERO on failure
+    # `sn-map` uses this as a hard guard ("fail loudly otherwise"), so it must not exit 0 over a
+    # 401. ServiceNow answers an unauthenticated call with a well-formed JSON error body, which
+    # pretty-prints beautifully and means nothing.
+    out=$(api GET "/api/now/table/sys_user?sysparm_query=user_name=$SN_USER&sysparm_fields=user_name")
+    if ! printf '%s' "$out" | grep -q '"user_name"'; then
+      echo "sn: SMOKE FAILED — no user_name in the response. Not authenticated." >&2
+      printf '%s\n' "$out" >&2
+      exit 1
+    fi
+    printf '%s' "$out" | jsonpp ;;
+  tables) # sn tables <needle> — find tables by name fragment
+    api GET "/api/now/table/sys_db_object?sysparm_query=nameLIKE${2:?needle}&sysparm_fields=name,label,super_class.name&sysparm_limit=30" | jsonpp ;;
+  fields) # sn fields <table> — dictionary incl. inherited (hierarchy-aware; the task.state lesson)
+    export SN_SELF="$0"
+    chain=$(table_chain "${2:?table}")
+    api GET "/api/now/table/sys_dictionary?sysparm_query=nameIN${chain}^elementISNOTEMPTY&sysparm_fields=name,element,column_label,internal_type,reference,mandatory&sysparm_limit=400" | jsonpp ;;
+  choices) # sn choices <table> <field> — ACTIVE choice values (see the inactive-is-NULL trap below)
+    # SCAR (verified 2026-08-02): `^inactive=false` alone is BLIND to Fluent-installed
+    # scoped choice lists. OOB rows store the string 'false'; rows installed with a scoped app store
+    # NULL — and the Table API RENDERS that NULL as "false" in the response, so the data looks right
+    # while the filter matches nothing. This validator is the tool the codex mandates against the
+    # silent choice-value discard, so a silently-empty result here is the worst possible failure: it
+    # either aborts a correct write or invites the caller to treat "no choices" as "anything goes".
+    api GET "/api/now/table/sys_choice?sysparm_query=name=${2:?table}^element=${3:?field}^inactiveISEMPTY^ORinactive=false&sysparm_fields=value,label&sysparm_limit=100" | jsonpp ;;
+  us-new) # sn us-new "<name>" — create update set AND route this API user's captures into it
+    name="${2:?update set name}"
+    us=$(api POST "/api/now/table/sys_update_set?sysparm_fields=sys_id" "{\"name\": \"$name\"}" \
+      | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['sys_id'])")
+    aid=$(admin_sys_id)
+    pref=$(api GET "/api/now/table/sys_user_preference?sysparm_query=user=${aid}^name=sys_update_set&sysparm_fields=sys_id" \
+      | python3 -c "import json,sys; r=json.load(sys.stdin)['result']; print(r[0]['sys_id'] if r else '')")
+    if [ -n "$pref" ]; then api PATCH "/api/now/table/sys_user_preference/$pref" "{\"value\": \"$us\"}" >/dev/null
+    else api POST "/api/now/table/sys_user_preference" "{\"user\": \"$aid\", \"name\": \"sys_update_set\", \"value\": \"$us\"}" >/dev/null; fi
+    echo "update_set=$us (captures for $SN_USER now route here — verify with: sn us-list $us)" ;;
+  us-list) # sn us-list <update_set_sys_id> — read-back what actually got captured
+    api GET "/api/now/table/sys_update_xml?sysparm_query=update_set=${2:?sys_id}&sysparm_fields=name,type,target_name" | jsonpp ;;
+  help|*)
+    # Match the pipe-alternation forms too (`get|post|patch|put|delete)`) — the old pattern
+    # silently omitted `get`, which is the verb both skills tell the agent to use. Read from
+    # the resolved script path, not $0, so `help` still works if this is put on PATH.
+    grep -E '^  [a-z|-]+\)' "${BASH_SOURCE[0]}" | sed 's/)[^#]*#/ —/' ;;
+esac
