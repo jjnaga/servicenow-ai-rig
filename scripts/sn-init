@@ -216,10 +216,30 @@ def step_environment(do_install=False, need_build=True):
         r = subprocess.run(["npm", "install", "-g", SDK_PKG], text=True)
         if r.returncode == 0 and shutil.which("now-sdk"):
             say(OK, f"now-sdk {_tool_version(['now-sdk', '--version'])} — installed just now")
+        elif r.returncode == 0:
+            # npm exit 0 + binary unreachable are NOT a failed install (measured 2026-08-07):
+            # the package landed in `npm prefix -g`/bin, which PATH doesn't read. Homebrew is
+            # the classic cause — a prefix pinned inside the Cellar means installs "succeed"
+            # off-PATH and `brew upgrade node` later deletes them wholesale. Name the real
+            # location instead of blaming sudo; a permissions hint here sends people the
+            # wrong way while the SDK sits installed and unreachable.
+            prefix = subprocess.run(["npm", "config", "get", "prefix"],
+                                    capture_output=True, text=True).stdout.strip()
+            bindir = os.path.join(prefix, "bin")
+            say(BAD, f"npm exited 0 — the SDK DID install, but {bindir} is not on PATH")
+            print(f"{INFO} Durable fix — user-scoped prefix, no sudo, survives node upgrades:")
+            print(f"{INFO}   npm config set prefix ~/.npm-global")
+            print(f"{INFO}   export PATH=\"$HOME/.npm-global/bin:$PATH\"   (add to your shell rc)")
+            print(f"{INFO}   npm i -g {SDK_PKG}")
+            if "/Cellar/" in prefix:
+                print(f"{INFO} Your prefix is version-pinned inside Homebrew's Cellar ({prefix}) — "
+                      f"`brew upgrade node` moves that directory and silently orphans every "
+                      f"global package in it. Do not just add it to PATH; repoint the prefix.")
+            ok = False
         else:
             say(BAD, f"npm i -g {SDK_PKG} failed (exit {r.returncode}) — install it by hand")
-            print(f"{INFO} A global npm install needing sudo is the usual cause. Either fix the "
-                  f"npm prefix (npm config set prefix ~/.npm-global) or use a node version manager.")
+            print(f"{INFO} A permissions error (EACCES, sudo prompt) is the usual cause. Either fix "
+                  f"the npm prefix (npm config set prefix ~/.npm-global) or use a node version manager.")
             ok = False
     else:
         say(BAD, f"now-sdk MISSING — run: npm i -g {SDK_PKG}   (or re-run: sn-init --install)")

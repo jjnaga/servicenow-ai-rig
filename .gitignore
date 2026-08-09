@@ -30,3 +30,19 @@ vendor/
 *.pfx
 id_rsa*
 .snpdi
+
+# Generated grounding — every instance generates its own via /sn-map; never shipped.
+codex/instance-profile.md
+__pycache__/
+
+# Working state of the current build-out — lives with the experiment's own record, not in
+# the shipped product. A fresh clone starts with CLAUDE.md and the codex, not our head-state.
+HEAD_STATE.md
+data/
+.agents/
+apps/ai-development-control-plane/
+
+# Recording leftovers
+*.cast
+*.orig
+.DS_Store
