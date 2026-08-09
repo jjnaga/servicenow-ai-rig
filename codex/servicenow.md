@@ -2,8 +2,8 @@
 
 > What it actually takes to have an AI build on ServiceNow without getting silently burned.
 > Every finding here was paid for on a live instance and carries the date it was learned.
-> Platform behaviour verified across 2026-08-01 → 2026-08-05 on release **Australia**, SDK
-> **4.9.2**. **Freshness law: re-verify anything load-bearing past ~a quarter** — this platform
+> Platform behaviour verified across 2026-08-01 → 2026-08-08 on release **Australia** (patch 3,
+> build 06-12-2026), SDK **4.9.2**. **Freshness law: re-verify anything load-bearing past ~a quarter** — this platform
 > ships two releases a year, and a stale claim in here is worse than no claim.
 
 ## WHY this file exists
@@ -195,6 +195,11 @@ Config records are table rows: `sys_script`, `sys_script_include`, `sys_script_c
   workflow — an agent must not be able to mint its own pre-approved changes);
   `sys_variable_value` (accepts INSERT, refuses UPDATE and DELETE, so a half-written ATF step can
   be neither corrected nor cleaned over REST).
+- **READS are refused too, and admin is no exemption.** `sys_store_app` returns **403 "Failed API
+  level ACL Validation"** to an account holding `admin` + `snc_basic_auth_api_access` (2026-08-08,
+  Australia PDI) — so **store-app inventory is not reachable over REST at all**, and a mapping or
+  audit pass must either observe it in the browser or declare it unmeasured. Do not read a read-403
+  as a broken credential; the smoke test passing while one table 403s is the signature.
 - Scope of a created record can silently follow the API **session's** scope rather than the
   payload — pin it explicitly and read back.
 - Rate planning: ~25k requests/hour/user, ~10 concurrent threads per node. A single-node instance
@@ -308,14 +313,33 @@ the only reader of a novel problem.
 
 **Query and counting traps** (these poison your *verification*, which is worse):
 
-- **An unresolvable dot-walk in an encoded query is silently ignored — the filter drops and you
-  get EVERY row.** A bad dot-walk returned all **437** rows instead of the intended 31, and in a
-  read-back that reads as spectacular success. **NEAR MISS from the same bug:** a cleanup query
+- **An UNRESOLVABLE FIELD REFERENCE in an encoded query is silently ignored — the clause drops and
+  you get EVERY row.** A bad dot-walk returned all **437** rows instead of the intended 31, and in
+  a read-back that reads as spectacular success. **NEAR MISS from the same bug:** a cleanup query
   dot-walking a nonexistent path matched every row on the instance and offered **ServiceNow's own
   ATF data** for deletion first. Only an ACL stopped it. **Never drive a destructive operation
-  from a dot-walked filter without first proving the filter narrowed the set.**
+  from a filter without first proving the filter narrowed the set.**
+  - **REFINED 2026-08-08 (`/sn-map`, Australia): the trigger is UNRESOLVABILITY, not dot-walking.**
+    A dot-walk that *resolves* is honoured normally; a **bare field name that does not exist on the
+    table** drops exactly the same way. Control-tested on `task_sla` (60 rows):
+    `task.sys_class_name=incident` → 60, `=change_request` → **0**, `=zzz_nonexistent` → **0**, and
+    `group_by task.sys_class_name` → `Incident 60` — dot-walks work. But `zzz_bogus_field=1` →
+    **60**. Reading the old entry as "dot-walks are the risk" is what let this bite: a filter on
+    `sysrule_assignment.assignment_group` (a field that does not exist — the real one is `group`)
+    returned all 12 rows and was recorded as "12/12 rules wired". The claim was accidentally true
+    and the evidence was worthless. **Suspect your field NAMES first, and check `sys_dictionary`
+    (hierarchy-aware) before trusting any count.**
+  - **The cheap proof, worth making reflex: run a deliberately-bogus-field probe against the same
+    table.** `sysparm_query=zzz_bogus_field=1&sysparm_count=true` — if it returns your full row
+    count, the filter engine is dropping unknown clauses and *every* count you just took from that
+    table is suspect. One extra call converts "this number surprised me" into a decided question.
 - **`sysparm_fields` silently omits fields that do not exist** — so a response missing a column
-  means "no such field", not "empty value".
+  means "no such field", not "empty value". **The practical hazard (2026-08-08): a generic row
+  printer erases the distinction.** Any `row.get(field)` helper renders an *omitted* column
+  identically to an empty one — `""` under `sysparm_display_value=all`, `None` under `=false`. A
+  populated reference field therefore read as blank across a whole table sweep. **When a field's
+  emptiness is load-bearing, fetch the full row without `sysparm_fields` and look at which keys
+  actually came back.**
 - **Counting a parent CI class double-counts its subclasses.** Scope with `^sys_class_name=<class>`
   for a true per-class count.
 - **`sn choices` / choice lookups are not hierarchy-aware.** `sc_req_item.state` has no choices of
@@ -323,6 +347,16 @@ the only reader of a novel problem.
   choices". Same for fields: `incident.state` lives on `task`.
 - **`v_plugin.active` is a STRING** (`active`/`inactive`), not a boolean — `^active=false` returns
   nothing, silently.
+- **`sys_created_on` DOES NOT SEPARATE CUSTOM WORK FROM PLATFORM METADATA — the release install
+  stamps its own rows with the provisioning date** (2026-08-08, Australia PDI). Measured:
+  `sys_dictionary` reported **138,525 of 159,881 rows "created 2026"**, which reads as a
+  catastrophically customised instance and is in fact the Australia install writing its own
+  dictionary. Same distortion on `sys_choice` (16,431/20,423), `sys_security_acl` (3,651/45,659),
+  `sys_script` (161/6,172). **Filter custom code by SCOPE (`sys_scope`, `sys_app`), never by date.**
+  The inverse holds and is genuinely useful: on *business* tables (`sys_user`, `core_company`,
+  `cmdb_ci`, `cmn_department`) creation strata cleanly separate vendor demo data from authored
+  content — ServiceNow's demo seed carries **2005-05-23** and **2012-02-17**, so anything else is
+  yours. **Date-stratify DATA; scope-filter METADATA.**
 
 **Data-integrity laws** (learned by creating duplicates):
 
@@ -407,8 +441,13 @@ the only reader of a novel problem.
 **Miscellaneous truths worth the line:**
 
 - **`glide.buildname` is NOT reliably present** in `sys_properties` (absent on a fresh Australia
-  instance, 2026-08-05) despite being widely cited. `sys_upgrade_history` carries app versions,
-  not the release family. There is no dependable REST-only release probe; let the SDK tell you.
+  instance, 2026-08-05) despite being widely cited; `glide.buildtag` is absent too.
+  `sys_upgrade_history` carries app versions, not the release family. **CORRECTED 2026-08-08: a
+  dependable REST-only release probe DOES exist — `glide.war`**, which returned
+  `glide-australia-02-11-2026__patch3-05-25-2026_06-12-2026_1106.zip` — release family **and**
+  patch level **and** build date, from one `sys_properties` read. Prefer it over "let the SDK tell
+  you" and over guessing; it is also what pins the `vendor/ServiceNowDocs` branch. (The earlier
+  "no dependable probe" line was written after probing only `buildname`/`buildtag`.)
 - **`contract_sla.duration` is an epoch-anchored `glide_duration`** — 40 hours is
   `1970-01-02 16:00:00`. Slice off the date and 40h is indistinguishable from 16h.
 - **`cmn_schedule` inherits `business_calendar`** (Australia): `label`/`plural_label`/

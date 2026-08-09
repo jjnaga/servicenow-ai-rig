@@ -25,8 +25,10 @@ via `GET /api/now/stats/<table>` with `sysparm_count` / `sysparm_group_by`. This
 1. **Guard:** `~/.snpdi/env` exists and `./scripts/sn smoke` returns the API user. Fail loudly otherwise.
 2. **Identity:** instance URL; plugin posture headline — the count of active `v_plugin` rows plus
    any notable non-default activations. (`v_plugin.active` is a **string**, `active`/`inactive` —
-   a boolean filter silently returns nothing.) Release name is often not exposed as a property;
-   say so rather than guessing.
+   a boolean filter silently returns nothing.) **Read the release from the `glide.war` property** —
+   it carries family, patch level, and build date in one string (`glide.buildname` and
+   `glide.buildtag` are both absent on Australia). If `glide.war` is missing too, say so rather
+   than guessing.
 3. **Foundation sweep — who is this company:** the `core_company` tree top-down (parent chains),
    `business_unit`, `cmn_department` (with `dept_head`), `cmn_cost_center`, `cmn_location`
    (parent chains, countries, time zones). User population totals grouped by company; the
@@ -61,6 +63,12 @@ via `GET /api/now/stats/<table>` with `sysparm_count` / `sysparm_group_by`. This
 9. **Archaeology and conventions:** update-set names as build history, naming prefixes, keying
    conventions, creation-date strata. State plainly **how and when this instance appears to have
    been built**, from evidence alone.
+   **Attribution is three-way here, not two.** Beyond vendor demo vs client build, a rig instance
+   also accumulates **experiment residue** — the same enhancement built repeatedly by different
+   agents or runs, distinguished only by an artifact prefix or a `vN` update-set suffix. Duplicate
+   apps, tables, and ATF suites of this kind carry **no architectural meaning**, and reading intent
+   into them invents a design the client never had. Name the duplicate sets explicitly, say which
+   axis they vary on, and push "which one is canonical?" to the human — the instance rarely knows.
 10. **Write the artifact** — `codex/instance-profile.md`:
     - freshness header: instance, generated date; **stale after 30 days → re-run**
     - **executive summary FIRST:** "what this instance is", ≤15 lines, written the way a
@@ -76,10 +84,18 @@ via `GET /api/now/stats/<table>` with `sysparm_count` / `sysparm_group_by`. This
 - **Introspect, never recall.** Every claim in the profile comes from a live query in this run.
 - **Deltas over dumps; aggregates over rows.** Record what makes THIS instance itself — never what
   every instance ships with, and never raw record payloads.
-- **Verify your own queries.** An unresolvable dot-walk in an encoded query is **silently ignored
-  and returns every row**; a parent-class count includes descendants; `sysparm_fields` silently
-  omits fields that do not exist. When a number surprises you in either direction, **re-derive it
-  a second way before it enters the profile.**
+- **Verify your own queries.** An **unresolvable field reference** in an encoded query is
+  **silently ignored and returns every row** — a bare field name that does not exist drops exactly
+  like a bad dot-walk, while a dot-walk that *resolves* is honoured; a parent-class count includes
+  descendants; `sysparm_fields` silently omits fields that do not exist, and a generic row-printer
+  renders that omission identically to an empty value. When a number surprises you in either
+  direction, **re-derive it a second way before it enters the profile** — a
+  `sysparm_query=zzz_bogus_field=1` probe returning the full row count proves the table is dropping
+  your clauses.
+- **Never date-stratify platform metadata.** The release install stamps `sys_dictionary`,
+  `sys_choice`, `sys_security_acl`, and `sys_script` with the provisioning date, so "created this
+  year" counts tens of thousands of OOB rows. Scope-filter metadata; date-stratify only business
+  data, where the demo seed's **2005-05-23 / 2012-02-17** strata are a clean vendor-vs-client split.
 - **This skill never writes to the instance.**
 - **Record roles, structure, and conventions — never individuals' names or email addresses.**
   `codex/instance-profile.md` is committed to the recipient's own source control, where it lands

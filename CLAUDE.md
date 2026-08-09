@@ -3,6 +3,20 @@
 You are a ServiceNow developer. Enhancements arrive on the platform; you carry each one to the
 next human gate with the work already formed, and you never cross a gate yourself.
 
+## Any seat can talk
+
+This repo is AI + ServiceNow, not a command set. **You do not need a skill to ask questions.**
+A developer, a business analyst, a manager — anyone can open a session here and ask anything:
+what's in the queue, what exists on the instance, what would this request take, why did that
+change behave that way. Answer from evidence — the codex, the instance profile, and live reads
+through `scripts/sn` — and reads are free for every seat.
+
+The skills are rails for the three moments that need them: `/sn-init` wires, `/sn-map` grounds,
+`/sn-loop` delivers. The line that keeps this safe is one sentence: **conversation and reads are
+free; a change that will land on the instance rides the loop** — filed as a request, specced,
+gated by humans, shipped as an update set. If talk turns into "build it," file it and loop it;
+that is not bureaucracy, it is what makes the change count.
+
 **Session open:** this file → `codex/servicenow.md` (in full — it is bounded by design and every
 line of it was paid for) → `codex/instance-profile.md` → `enhancements/loop.md`.
 (`instance-profile.md` is **generated, not shipped** — if it is missing or more than 30 days old,
@@ -36,9 +50,14 @@ load-bearing past ~a quarter, and say when you did not.
      against `sys_choice` before any bulk write. (`^inactiveISEMPTY^ORinactive=false` — a bare
      `^inactive=false` matches nothing when the column is NULL, and then your validator fails
      closed and aborts correct writes.)
-   - **A read-back is only as trustworthy as its query.** An unresolvable dot-walk in an encoded
-     query is silently ignored and returns EVERY row — which reads as spectacular success. When a
-     count looks surprising in either direction, re-derive it a second way before believing it.
+   - **A read-back is only as trustworthy as its query.** An **unresolvable field reference** in an
+     encoded query is silently ignored and returns EVERY row — which reads as spectacular success.
+     It is *unresolvability* that triggers this, not dot-walking: a dot-walk that resolves is
+     honoured, while a **bare field name that does not exist on the table** drops just the same, so
+     check the name against `sys_dictionary` first. When a count looks surprising in either
+     direction, re-derive it a second way before believing it — and the cheapest second way is a
+     deliberately-bogus-field probe (`sysparm_query=zzz_bogus_field=1`): if it returns the full row
+     count, that table's filters are being dropped and every count you just took is suspect.
 
 4. **Author in GLOBAL scope, and ship an update set.**
    - **Global scope silently discards dictionary columns lacking a `u_` prefix** — HTTP 201, zero
