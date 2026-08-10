@@ -205,7 +205,7 @@ class RunnerTests(unittest.TestCase):
         self.assertIsInstance(argv, list)
         self.assertNotIn('$(touch nope);&', argv)
         self.assertEqual(argv[0], adapters.CODEX_BIN)
-        self.assertTrue(argv[0].endswith('codex-wrapper'), 'provider binary is the configured wrapper')
+        self.assertTrue(argv[0].endswith('codex-wrapper'), 'provider binary is the configured wrapper, not interpolated input')
 
     def test_lock_contention_does_not_run_second_worker(self):
         with tempfile.TemporaryDirectory() as temporary:

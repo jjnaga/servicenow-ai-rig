@@ -48,9 +48,9 @@ def fixture(job: dict, workdir: Path) -> AdapterResult:
     return AdapterResult(True, f'fixture completed {action}', str(artifact), draft, title)
 
 
-# Portability: the codex adapter shells out to a site-provided wrapper (summon/status/answer).
-# Keep the default (nothing changes locally) but let a server override it, so moving this
-# worker off a laptop is configuration rather than a code edit.
+# Portability: the codex adapter shells out to a site-provided wrapper implementing the
+# summon/status/answer contract. Point AI_CONTROL_CODEX_BIN at yours; the default assumes a
+# `codex-wrapper` on PATH, so moving this worker between hosts is configuration, not a code edit.
 CODEX_BIN = os.environ.get('AI_CONTROL_CODEX_BIN', 'codex-wrapper')
 
 
