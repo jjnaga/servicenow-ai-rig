@@ -1,0 +1,7 @@
+{
+    "scope": "global",
+    "scopeId": "9f4d4367b62046aea62759f06e74192e",
+    "name": "AI Development Control Plane",
+    "packageResolverVersion": "2.0.0",
+    "tsconfigPath": "./src/server/tsconfig.json"
+}

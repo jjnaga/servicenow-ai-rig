@@ -151,6 +151,7 @@ step fails — is in [`enhancements/loop.md`](enhancements/loop.md).
 | `scripts/sn-init` | Wire an instance from scratch |
 | `enhancements/` | The loop contract, and a folder per enhancement as it is worked |
 | `examples/` | One real enhancement, end to end: intake document → spec → package |
+| `apps/ai-development-control-plane/` | **Optional.** A ServiceNow app that moves the human's review surface onto the platform: versioned Markdown specs, a hash-frozen approval, and a worker that claims work off the enhancement's own phase. The loop works without it — see its `codex/APP.md`. |
 
 ## The thing worth knowing
 

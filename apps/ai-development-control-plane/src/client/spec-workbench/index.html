@@ -1,0 +1,33 @@
+<html class="-polaris">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI control workbench</title>
+    <sdk:now-ux-globals></sdk:now-ux-globals>
+    <script type="text/javascript">
+      (function () {
+        var works = (function () { try { var result = Array.from(new Set([1, 2])); return Array.isArray(result) && result.length === 2; } catch (error) { return false; } })();
+        if (works) return;
+        var original = Array.from;
+        function safeFrom(arrayLike, mapFn, thisArg) {
+          if (arrayLike == null) throw new TypeError("Array.from requires an array-like object");
+          var mapping = typeof mapFn === "function";
+          var iteratorFunction = arrayLike[Symbol.iterator];
+          if (typeof iteratorFunction === "function") {
+            var values = [], iterator = iteratorFunction.call(arrayLike), step, index = 0;
+            while (!(step = iterator.next()).done) { values[index] = mapping ? mapFn.call(thisArg, step.value, index) : step.value; index++; }
+            return values;
+          }
+          return original.call(this, arrayLike, mapFn, thisArg);
+        }
+        Array.from = function (arrayLike, mapFn, thisArg) { return safeFrom.call(this, arrayLike, mapFn, thisArg); };
+      })();
+      if (window.Element && Element.Methods) {
+        Element.Methods.remove = function (element) { element = $(element); if (element.parentNode) element.parentNode.removeChild(element); return element; };
+        Element.addMethods();
+      }
+    </script>
+    <script src="main.tsx?uxpcb=$[UxFrameworkScriptables.getFlushTimestamp()]" type="module"></script>
+  </head>
+  <body><div id="root"></div></body>
+</html>

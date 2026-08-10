@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Template. Replace REPLACE_WITH_ABSOLUTE_PATH_TO_REPO with the absolute path to your clone,
+  and the reverse-DNS label with your own, before:
+
+      cp launchd/com.example.sn-ai-control-runner.plist ~/Library/LaunchAgents/
+      launchctl load ~/Library/LaunchAgents/com.example.sn-ai-control-runner.plist
+
+  launchd requires absolute paths — it does not expand ~ or inherit a working directory.
+  StartInterval is deliberately coarse: the runner processes ONE unit of work and exits, so
+  recurrence is the scheduler's job and the model's context stays cold on every wake.
+  RunAtLoad is false so installing the agent never starts a build you did not ask for.
+
+  On Linux use a systemd timer or cron calling runner/run-once; nothing in the runner is
+  macOS-specific.
+-->
+<plist version="1.0"><dict><key>Label</key><string>com.example.sn-ai-control-runner</string><key>ProgramArguments</key><array><string>REPLACE_WITH_ABSOLUTE_PATH_TO_REPO/apps/ai-development-control-plane/runner/run-once</string></array><key>StartInterval</key><integer>300</integer><key>RunAtLoad</key><false/><key>StandardOutPath</key><string>/tmp/sn-ai-control-runner.log</string><key>StandardErrorPath</key><string>/tmp/sn-ai-control-runner.err.log</string></dict></plist>

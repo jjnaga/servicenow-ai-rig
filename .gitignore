@@ -40,7 +40,14 @@ __pycache__/
 HEAD_STATE.md
 data/
 .agents/
-apps/ai-development-control-plane/
+
+# The control plane ships as a product; its RUN RECORD does not. Same placement test as the
+# rest of the repo: could a stranger with their own instance use this? → ship it. Does it only
+# make sense to someone who knows why we did it? → it stays local. Receipts, screenshots and
+# the dated build journal are ours; the source, the runner and the codex are theirs.
+apps/ai-development-control-plane/evidence/
+apps/ai-development-control-plane/BUILD_JOURNAL.md
+apps/ai-development-control-plane/NEXT_AGENT_PROMPT.md
 
 # Recording leftovers
 *.cast

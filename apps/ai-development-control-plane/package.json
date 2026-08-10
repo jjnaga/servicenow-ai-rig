@@ -1,0 +1,28 @@
+{
+    "name": "ai-development-control-plane",
+    "version": "0.0.1",
+    "description": "",
+    "license": "UNLICENSED",
+    "imports": {
+        "#now:*": "./@types/servicenow/fluent/*/index.js"
+    },
+    "scripts": {
+        "build": "now-sdk build",
+        "deploy": "now-sdk install",
+        "transform": "now-sdk transform",
+        "types": "now-sdk dependencies"
+    },
+    "devDependencies": {
+        "@servicenow/glide": "27.0.5",
+        "@servicenow/sdk": "4.10.1",
+        "typescript": "5.5.4"
+    },
+    "dependencies": {
+        "@servicenow/react-components": "^0.1.8",
+        "@types/react": "18.3.12",
+        "@types/react-dom": "18.3.1",
+        "dompurify": "^3.2.6",
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
+    }
+}

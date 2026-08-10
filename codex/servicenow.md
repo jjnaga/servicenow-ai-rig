@@ -2,8 +2,8 @@
 
 > What it actually takes to have an AI build on ServiceNow without getting silently burned.
 > Every finding here was paid for on a live instance and carries the date it was learned.
-> Platform behaviour verified across 2026-08-01 → 2026-08-08 on release **Australia** (patch 3,
-> build 06-12-2026), SDK **4.9.2**. **Freshness law: re-verify anything load-bearing past ~a quarter** — this platform
+> Platform behaviour verified across 2026-08-01 → 2026-08-09 on release **Australia** (patch 3,
+> build 06-12-2026), SDK **4.9.2** and (entries dated 2026-08-08 onward) **4.10.1**. **Freshness law: re-verify anything load-bearing past ~a quarter** — this platform
 > ships two releases a year, and a stale claim in here is worse than no claim.
 
 ## WHY this file exists
@@ -113,6 +113,10 @@ disappears. `now-sdk init` prompts for Global vs Scoped; a global scaffold write
   `Acl({type:'record', table, operation, roles})` explicitly in source. That works, needs no
   security_admin elevation, creates the role exactly once on upgrade, and the install loader
   repairs the dangling reference by name.
+- **SDK 4.10.1 EXTERNAL ROLE REFERENCES NEED `Now.ref`, NOT A BARE NAME** (verified 2026-08-08).
+  `Role.containsRoles: ['canvas_user']` hashes the literal as a new deterministic identity; it does
+  not bind the existing platform role. Use `Now.ref('sys_user_role', <live sys_id>)`, inspect the
+  material INSERT/UPDATE XML, then read the installed role-containment row back.
 - **REFERENCE-TYPED DATA PILLS DO NOT CROSS THE CUSTOM-ACTION BOUNDARY in SDK 4.9.2, in either
   direction.** Same flow, same run: boolean, integer, and string pills delivered perfectly; only
   reference pills vanished. *Inbound*, the documented Service Catalog trigger pill reached the
@@ -154,6 +158,17 @@ disappears. `now-sdk init` prompts for Global vs Scoped; a global scaffold write
   always.
 - **The SDK upgrade lane cleanly DELETES artifacts removed from source** — delete-by-omission is
   safe (verified: a dropped variable and client script left zero orphans).
+- **A `Table({augments: ...})` CAN LOG A HARMLESS `Skipped Error` FOR TABLE DOCUMENTATION**
+  (SDK 4.10.1, verified 2026-08-08). The loader emitted the existing table-level
+  `sys_documentation_<table>__en`, then skipped it because the coalesced row already existed. Never
+  wave the counter away: open the exact upgrade detail and read the preserved live label plus all
+  intended augmented fields. Only that combined receipt distinguishes a benign coalesce from a
+  partial install.
+- **UI PAGE CDATA MARKERS BREAK UNDER JELLY EVEN WHEN THE APP SEEMS TO WORK** (verified 2026-08-08).
+  A closing `//]]>` was split into `//]]` plus a bare `>` inside the script, raising a syntax error
+  on every load while the module still rendered. Omit HTML-era CDATA markers from SDK UI Pages and
+  require a zero-page-error browser pass. Scripted REST browser clients also receive the outer
+  `{result: ...}` envelope; unwrap it before checking an inner application receipt.
 - First install writes a **`sys_rollback_context`** — an undo path exists even at v0.0.1.
 
 #### Lane B — raw REST (secondary)
@@ -180,6 +195,16 @@ Config records are table rows: `sys_script`, `sys_script_include`, `sys_script_c
   What works: `sys_update_xml_list.do?sysparm_query=update_set=<sys_id>&XML` in-session, which
   returns well-formed XML rooted at `<xml>` with **no `sys_remote_update_set` wrapper** — an
   evidence artifact, not a transport. **Do not hand-fabricate that wrapper** (tried; malformed).
+- **Removing a table from Fluent source removes its BEHAVIOUR, not its SCHEMA** (measured
+  2026-08-09, SDK 4.10.1). Deleting a `Table({...})` emits `deleted: true` tombstones into
+  `generated/keys.ts` — 68 of them in the measured case, one targeting `sys_db_object` — and
+  `now-sdk install` honours them for ACLs, UI actions, business rules and notifications (all
+  verified 0 after install) but **not** for the `sys_db_object` row, **not** for a column removed
+  from an augmented table, and **not** for the rows. The result is an orphaned table holding live
+  data with every ACL stripped off it, while the repo reads as though it is gone. **Verify
+  `sys_db_object` and `sys_dictionary` directly after any table removal, and drop the physical
+  table as a separate human-authorized step.** A clean build, a successful install, and the
+  presence of tombstones are all worthless as evidence of removal.
 - **Background scripts:** there is no official REST for `sys.scripts.do`. The blessed equivalent
   is **`sysauto_script` (Scheduled Script Execution)** — an ordinary table, Table-API creatable,
   a first-party Fluent type. **⚠ Verify it actually ran.** On a PDI (2026-08-05) a job created
@@ -188,7 +213,10 @@ Config records are table rows: `sys_script`, `sys_script_include`, `sys_script_c
   executed** — no row written, no `gs.log` output, after 40s. The trigger stays Ready and looks
   identical to one that completed. If you use this lane, prove execution with a log marker before
   you depend on it. (An *inactive* job is skipped silently while its trigger is still consumed —
-  that one is at least explicable.)
+  that one is at least explicable.) **UPDATE 2026-08-09: this failure is confined to the ON-DEMAND
+  Run Once path. A `run_type=periodically` job fires exactly on schedule** — verified by log marker
+  with the trigger's `next_action` advancing by one period. Prefer periodic; the log marker stays
+  mandatory either way.
 - **Tables that refuse REST writes by ACL** — treat a 403 here as governance working, not as a
   puzzle to route around: `sys_number` (403 with an **empty body**);
   `std_change_record_producer` (standard changes must arrive through the Standard Change Proposal
@@ -239,12 +267,22 @@ stage is not ceremony on this platform; it is where the work is.**
   `sys_journal_field` rows and no error**, because `task.work_notes` requires `itil`/`task_editor`.
   Counter: after granting table access, **write one field and re-GET `sys_journal_field`**. Fix
   with a field-level ACL (more specific wins), never by granting `itil` to a requester population.
+- **DICTIONARY `read_only` OUTRANKS A CORRECT FIELD ACL FOR SECURE/API WRITES** (SDK 4.10.1,
+  verified 2026-08-08). `GlideRecordSecure.canWrite()` stayed false for runner fields until the
+  dictionary flag was removed; least privilege belongs in the specific runner field ACLs. And for
+  Task journals, `setValue('work_notes', text)` can update the parent yet create zero journal rows;
+  direct assignment worked. Always read `sys_journal_field` back, not only the parent record.
 - **Empty result ≠ success.** Check the worker user's read rights explicitly before believing a
   zero.
 - **ATF, headless, is the CI gate.** Author tests in Fluent; run via
   `POST /api/sn_cicd/testsuite/run` → poll `/api/sn_cicd/progress/{id}` (`status_label` DOES
   populate here: Pending → Running → Successful) → `/api/sn_cicd/testsuite/results/{id}`. A suite
   of 3 server-side tests runs in ~10 seconds. House rule: **no test, no hand-off.**
+- **ATF STEP SUCCESS IS NOT WRITE PROOF** (Australia/SDK 4.10.1, verified 2026-08-08). RecordUpdate
+  can report success after ACL stripping; assert `GlideRecordSecure.canWrite()` and re-read with an
+  independent record. Conversely, an intentional unique-index error still fails a test with
+  `failOnServerError=true` even when caught. Bank that red receipt once, then use non-error
+  count/idempotency assertions for the durable suite.
 - **Granting an application role auto-adds inherited roles.** Read back the user's FULL role list
   after a grant and report the extras rather than being surprised in a security review.
 
@@ -333,6 +371,30 @@ the only reader of a novel problem.
     table.** `sysparm_query=zzz_bogus_field=1&sysparm_count=true` — if it returns your full row
     count, the filter engine is dropping unknown clauses and *every* count you just took from that
     table is suspect. One extra call converts "this number surprised me" into a decided question.
+- **INDEX METADATA IS NOT WHERE YOU LOOK FOR IT, AND THE PLATFORM RENAMES YOUR INDEX**
+  (2026-08-09, Australia/SDK 4.10.1). A Fluent `index: [...]` declaration becomes a **physical
+  database index only** — no `sys_index` row, no `<index>` element in the stored `sys_dictionary`
+  update payload, nothing in `v_index_creator` (which returns zero for every table, including
+  `incident`). Read them from **`v_db_index`** (label "Database Indexes"), filtering its **string**
+  field `table_name`, **through the list processor** — `v_db_index_list.do?sysparm_query=table_name=<t>&XML`
+  — because it is virtual and the **Table API returns 0 rows for it even for `incident`**, so a
+  REST zero here is meaningless. Three traps ride along: (1) **the declared index name is
+  discarded** — the physical index is named after its **leading column**, disambiguated `_2`, so
+  verifying by name finds nothing and reads as a failed install; **verify by column tuple**;
+  (2) `sys_index` carries both `logical_table_name` (string, label "Table") and `table`
+  (**reference**, label "Reference Table"), so filtering table *names* against the reference column
+  silently returns zero — a wrong-*typed* field, which the bogus-field probe will NOT catch because
+  the clause resolves; (3) **a Task-derived table has no indexes of its own** (its rows live in
+  `task`) and **no read-only surface exposes an index's unique flag** — `v_db_index` has no unique
+  column — so uniqueness must come from `sys_dictionary.unique` (column-level only) or a functional
+  proof.
+- **ATF ROLLBACK POISONS EVENT/NOTIFICATION EVIDENCE** (2026-08-09). Every event raised inside a
+  test points at a record ATF then deletes, so the event lands in `sysevent.state=error` and
+  generates no email. Measured on one app: 27 of 34 events, **100% of them resolving to a
+  now-missing record**. Before reading an error count as a defect, resolve each event's target and
+  separate test-raised from runtime-raised. Related: a notification whose only recipient is the
+  acting user generates nothing when `sendToCreator: false` — correct behaviour that reads exactly
+  like a broken notification.
 - **`sysparm_fields` silently omits fields that do not exist** — so a response missing a column
   means "no such field", not "empty value". **The practical hazard (2026-08-08): a generic row
   printer erases the distinction.** Any `row.get(field)` helper renders an *omitted* column
@@ -477,10 +539,14 @@ Open questions. Each one is something we do not know, written down so nobody ass
    the application's own data, so the flag captures nothing and publish still reports success.
    UNCONFIRMED whether the real lane is a Fluent data-seed mechanism or a Studio-side step. Until
    answered, **count data rows in `sys_update_xml` after every publish.**
-5. **`sysauto_script` + `sys_trigger` execution on a PDI** — did not fire in testing (2026-08-05)
-   despite an active job, a queued trigger, and a demonstrably live scheduler. Determine whether
-   PDIs restrict on-demand job execution, or whether the trigger needs a field we did not set.
-   This matters because it is the documented escalation lane for everything REST refuses.
+5. **`sysauto_script` execution on a PDI — RESOLVED 2026-08-09, and the answer splits the lane.**
+   **Periodic jobs DO fire.** A `run_type=periodically` job (15 min) installed via the SDK executed
+   at its scheduled second — marker `2026-08-10 02:30:01` UTC, `source=*** Script`, zero ATF runs in
+   the window, and `sys_trigger.next_action` advanced 02:30 → 02:45. So the 2026-08-05 failure was
+   **not** "PDIs restrict scheduled execution"; it is specific to the **on-demand Run Once**
+   (`trigger_type=0`) path, which remains unexplained and unusable. **Law: schedule it periodically
+   and read the log; never queue a one-shot trigger and expect it to run.** The escalation lane for
+   things REST refuses is therefore alive, but only in its recurring form.
 6. **Does a cheap model tier stay good on a HARDER problem?** One data point exists, on a
    moderate enhancement. Before making a cheap tier the default, run a deliberately nastier
    ticket — brownfield-shaped, ambiguous, or an integration.

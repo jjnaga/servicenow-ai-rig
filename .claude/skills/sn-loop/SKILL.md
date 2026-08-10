@@ -62,7 +62,8 @@ Each state: do the work → post a work note in the shape `loop.md` defines → 
 
 - **GATE 1** — the human tunes and approves in-session. You may record their stated decision on
   the record **only with explicit attribution** ("decided by <name>, recorded by agent on their
-  behalf"). **Introspect the gate choice values before writing one** —
+  behalf"). *(This whole recording step is a workaround for having no review UI — if the control
+  plane is installed, it does not apply. See the optional section below.)* **Introspect the gate choice values before writing one** —
   `./scripts/sn choices <table> u_gate_1_decision` — the stored values are lowercase
   (`approved`, `changes_requested`, `rejected`) and anything else is discarded silently at HTTP
   200, leaving the gate misreporting its own state. Fold their answers into the spec before any
@@ -86,6 +87,31 @@ Each state: do the work → post a work note in the shape `loop.md` defines → 
   install, and the publish still reports success. Verify each artifact class against what you
   built, run headless ATF, capture screenshots only after the read-backs agree, then assemble the
   Gate-2 package spec-first. **STOP. Gate 2 is the human's.**
+
+## Optional — if the AI Development Control Plane is installed
+
+Probe once, at read-in: `./scripts/sn tables u_sn_spec_version`. No rows → skip this section
+entirely; everything above is the whole loop.
+
+Rows → the human's review surface lives **in ServiceNow**, and exactly three touchpoints change.
+Same intake table, same phases, same two gates — the app adds a review surface, it does not add a
+workflow.
+
+| step | without the app | with the app |
+|---|---|---|
+| **SPEC** | write `enhancements/<n>/SPEC.md`, post the path as a work note | write the same file, **then** `POST /api/global/ai_control/v1/enhancements/<sys_id>/request-draft` and create the spec as a `u_sn_spec_version` draft. The human edits and submits it in the workbench; submitting freezes the exact bytes and their SHA-256 |
+| **GATE 1** | human decides in-session; you record it with attribution | **you record nothing.** The human clicks Approve / Request changes / Reject themselves. The attribution workaround is retired — do not write `u_gate_1_decision` at all |
+| **BUILD** | build from your own `SPEC.md` | `POST .../enhancements/<sys_id>/claim` → returns the **exact approved markdown + hash**. Build from *that*, never from the file on disk. Finish with `POST .../finish` |
+
+Three things that follow, and they are the point:
+
+- **The claim is the phase move.** `u_phase` spec→build only succeeds if Gate 1 is approved and
+  nobody holds it. A refusal (`expected spec, got build`) is a correct answer, not an error to
+  route around — someone or something else has the record.
+- **The file on disk stops being the authority.** The human approved bytes, not your file. If they
+  edited the spec in the workbench, the claim response is the only truthful copy.
+- **A stalled build is not yours to restart.** A scheduled job closes the clock and notifies; a
+  human clicks Retry build. Never re-claim a record you just failed.
 
 ## Hard rules
 
