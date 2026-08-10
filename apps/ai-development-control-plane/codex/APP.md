@@ -41,6 +41,30 @@ claim moves spec→build. That is what keeps `build` from lying about somebody b
 is what the sweeper reads. Pinned by ATF (`submit and approve exact snapshot` asserts
 `u_phase=spec` after approve).
 
+**`request-draft` HANDS THE WORK TO WHOEVER POLLS FIRST** (measured 2026-08-09, live LaunchAgent
+runner in fixture mode). That is the design working, and it surprises the agent that called it. An
+agent drove the loop by hand: `POST …/request-draft` → `u_phase=spec` with no current spec → the
+runner's next poll selected `draft_spec` and wrote its **fixture** draft, ~3½ minutes later. The
+agent's own insert then died on the unique index over (`u_enhancement`, `u_version`).
+
+Three things that generalise past this one race:
+
+- **A pre-write collision check is only true for the instant it ran.** The agent had queried the
+  spec table three seconds earlier and correctly got zero rows. On an instance carrying an
+  autonomous worker, that instant is short.
+- **The Table API surfaced only `Operation Failed` / `Error during insert`.** The constraint name
+  and duplicate key existed **only in `syslog`** — one query killed three wrong hypotheses (payload,
+  ACL, the business-rule guard). Same lesson the parent codex records for record-producer 500s, now
+  confirmed for Table API inserts. (The key printed as `u_enhancement` because the platform names an
+  index after its leading column — see the index scar below.)
+- **The fix is to adopt, not to create.** `saveDraft` PATCHes whatever draft exists and does its own
+  read-back; version history stays intact and nothing is deleted or duplicated. Read
+  `request-draft` as *"a draft will appear — adopt it"*, never *"a slot is reserved for me."*
+
+**The same hazard sits at the approval step, and it is the sharper one:** an `approved` spec selects
+`build`, so a loaded fixture runner will claim a record the moment a human approves it. Either stop
+the LaunchAgent while an agent drives the loop by hand, or expect to clean up a fixture build.
+
 **The sweeper fires — measured, not assumed.** `2026-08-10 02:30:01` UTC, `source=*** Script`, no
 ATF run in the window, `sys_trigger.next_action` advanced one period. This also resolved the
 platform's open question: periodic `sysauto_script` works on a PDI; only the on-demand Run Once

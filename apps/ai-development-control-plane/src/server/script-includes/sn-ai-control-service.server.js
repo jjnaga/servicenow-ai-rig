@@ -2,6 +2,27 @@ var SnAiControlService = Class.create()
 SnAiControlService.prototype = {
     initialize: function () {},
 
+    /**
+     * The current instant, in the representation the platform actually STORES.
+     *
+     * DO NOT USE `gs.nowDateTime()` FOR A FIELD VALUE. It returns the current time formatted in
+     * the SESSION's timezone and display format, and `setValue()` does not convert it — it
+     * stores those characters verbatim into a field the platform reads back as UTC. So every
+     * timestamp this service wrote was silently shifted by the instance's UTC offset.
+     *
+     * Found 2026-08-09 by the first real build to run through this app (TASK0020425): it was
+     * claimed, and the stale-build sweeper aged it out roughly SEVEN MINUTES later while it was
+     * still running, because `work_start` was written seven hours in the past the instant it was
+     * stamped. The sweeper's own clause, `work_start < gs.minutesAgo(limit)`, was correct all
+     * along — `gs.minutesAgo()` IS UTC — so the two sides of the comparison never agreed and the
+     * lease was effectively negative for every build this app has ever claimed.
+     *
+     * `new GlideDateTime().getValue()` is UTC in internal format, which is what the column holds.
+     */
+    nowUtc: function () {
+        return new GlideDateTime().getValue()
+    },
+
     sha256: function (text) {
         return new GlideDigest().getSHA256Hex(String(text))
     },
@@ -201,7 +222,7 @@ SnAiControlService.prototype = {
         spec.setValue('u_content_sha256', hash)
         spec.setValue('u_state', 'in_review')
         spec.setValue('u_submitted_by', gs.getUserID())
-        spec.setValue('u_submitted_at', gs.nowDateTime())
+        spec.setValue('u_submitted_at', this.nowUtc())
         if (!spec.update()) throw new Error('AI control: submit update failed')
         enhancement.setValue('u_current_spec', specId)
         enhancement.setValue('u_gate_1_decision', this.requireChoice('u_sn_enhancement', 'u_gate_1_decision', 'pending'))
@@ -232,7 +253,7 @@ SnAiControlService.prototype = {
         try {
             spec.setValue('u_state', 'approved')
             spec.setValue('u_decided_by', gs.getUserID())
-            spec.setValue('u_decided_at', gs.nowDateTime())
+            spec.setValue('u_decided_at', this.nowUtc())
             if (!spec.update()) throw new Error('AI control: approval update failed')
             // The phase is NOT advanced here. Approval records a human decision; advancing
             // spec→build is the worker's claim, so `build` keeps meaning "somebody is
@@ -286,7 +307,7 @@ SnAiControlService.prototype = {
         if (hash !== String(spec.getValue('u_content_sha256') || '')) throw new Error('AI control: approved spec hash mismatch')
         this.requireChoice('u_sn_enhancement', 'u_phase', 'build')
         enhancement.setValue('u_phase', 'build')
-        enhancement.setValue('work_start', gs.nowDateTime())
+        enhancement.setValue('work_start', this.nowUtc())
         enhancement.setValue('work_end', '')
         enhancement.setValue('u_evidence_summary', '')
         if (!enhancement.update()) throw new Error('AI control: claim update failed')
@@ -318,7 +339,7 @@ SnAiControlService.prototype = {
         var evidence = String(summary || '').substring(0, 4000)
         if (artifactPath) evidence = evidence + ' [artifact=' + String(artifactPath).substring(0, 255) + ']'
         if (succeeded) enhancement.setValue('u_phase', this.requireChoice('u_sn_enhancement', 'u_phase', 'package_verify'))
-        enhancement.setValue('work_end', gs.nowDateTime())
+        enhancement.setValue('work_end', this.nowUtc())
         enhancement.setValue('u_evidence_summary', evidence)
         if (!enhancement.update()) throw new Error('AI control: finish update failed')
         this.assertReadBack('u_sn_enhancement', enhancementId, { u_phase: succeeded ? 'package_verify' : 'build' }, 'finished enhancement')
@@ -357,7 +378,7 @@ SnAiControlService.prototype = {
         var aged = []
         while (stale.next()) {
             var id = String(stale.getUniqueValue())
-            stale.setValue('work_end', gs.nowDateTime())
+            stale.setValue('work_end', this.nowUtc())
             stale.setValue('u_evidence_summary', 'Worker went silent; aged out after ' + limit + ' minutes by the AI control stale-build sweeper.')
             if (stale.update()) {
                 aged.push(id)
@@ -383,7 +404,7 @@ SnAiControlService.prototype = {
             spec.setValue('u_state', 'changes_requested')
             spec.setValue('u_review_notes', note)
             spec.setValue('u_decided_by', gs.getUserID())
-            spec.setValue('u_decided_at', gs.nowDateTime())
+            spec.setValue('u_decided_at', this.nowUtc())
             if (!spec.update()) throw new Error('AI control: changes update failed')
             // No revise job: the spec's own `changes_requested` state IS the work signal,
             // and the attributed note is the steering. A worker polling `u_phase=spec`
@@ -412,7 +433,7 @@ SnAiControlService.prototype = {
         this.requireChoice('u_sn_enhancement', 'u_gate_1_decision', 'rejected')
         spec.setValue('u_state', 'rejected')
         spec.setValue('u_decided_by', gs.getUserID())
-        spec.setValue('u_decided_at', gs.nowDateTime())
+        spec.setValue('u_decided_at', this.nowUtc())
         if (!spec.update()) throw new Error('AI control: rejection update failed')
         enhancement.setValue('u_gate_1_decision', 'rejected')
         if (!enhancement.update()) throw new Error('AI control: rejection gate update failed')

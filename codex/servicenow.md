@@ -371,6 +371,16 @@ the only reader of a novel problem.
     table.** `sysparm_query=zzz_bogus_field=1&sysparm_count=true` — if it returns your full row
     count, the filter engine is dropping unknown clauses and *every* count you just took from that
     table is suspect. One extra call converts "this number surprised me" into a decided question.
+  - **WIDENED 2026-08-09: this poisons INPUT, not only verification.** Selecting employees to seed a
+    register with, `active=true^email.endswith@yourcompany.example` — `email.endswith` is not a
+    field, the clause dropped, and the result was all **735** users: the vendor's demo population
+    sitting in a list captioned as the client's staff. **Nothing downstream would have caught it.**
+    The rows are real users, the references resolve, the install succeeds, the tests pass — the
+    artifact simply ships seeded with somebody else's people. (The correct operator is `emailENDSWITH`; corrected,
+    95 rows.) Note what actually caught it: **re-asserting the intended condition on the returned
+    rows locally**, not the bogus-field probe — the probe tells you the engine drops clauses, never
+    that *these particular rows* belong. **Law: when a query's rows become an artifact's CONTENT
+    rather than a count, re-check the condition yourself against what came back.**
 - **INDEX METADATA IS NOT WHERE YOU LOOK FOR IT, AND THE PLATFORM RENAMES YOUR INDEX**
   (2026-08-09, Australia/SDK 4.10.1). A Fluent `index: [...]` declaration becomes a **physical
   database index only** — no `sys_index` row, no `<index>` element in the stored `sys_dictionary`

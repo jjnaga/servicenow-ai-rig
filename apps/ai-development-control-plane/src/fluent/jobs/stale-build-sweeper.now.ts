@@ -25,9 +25,38 @@ export const staleBuildSweeper = Record({
         name: 'AI control: age out stale builds',
         active: true,
         run_type: 'periodically',
-        run_period: '1970-01-01 00:15:00',
+        // Hourly, not every 15 minutes. A lease measured in hours does not need a
+        // quarter-hourly check, and each sweep is a full query over the enhancement table.
+        run_period: '1970-01-01 01:00:00',
         run_start: '2026-08-09 00:00:00',
         conditional: false,
-        script: "new SnAiControlService().ageOutStaleBuilds(60);",
+        /*
+         * LEASE: 24 hours (was 60 minutes). Product owner's call, 2026-08-09: "just make it
+         * like hours then, even daily."
+         *
+         * WHY IT WAS TOO SHORT, AND WHY THIS NUMBER IS NOT THE WHOLE STORY. The first real
+         * build to run through this app (TASK0020425) was aged out roughly SEVEN MINUTES after
+         * claiming it, while it was actively running, and `finish` then refused with
+         * `409 build already finished`.
+         *
+         * The 60 was not the cause. `claimBuild` writes `work_start` with `gs.nowDateTime()`,
+         * which returns SESSION-LOCAL time, into a field the platform stores and compares as
+         * UTC — while this sweeper's clause, `work_start < gs.minutesAgo(limit)`, is correctly
+         * UTC. So a freshly stamped `work_start` already sits one UTC offset in the past
+         * (seven hours on this instance) and satisfies the clause immediately. Measured: a
+         * three-minute-old claim matched `gs.minutesAgo(30)`.
+         *
+         * A 24-hour lease absorbs that offset — the effective real-world lease becomes
+         * 24h minus the offset, about 17 hours here — which is comfortably past "hours, even
+         * daily" and fixes the symptom now.
+         *
+         * IT DOES NOT FIX THE CAUSE, and the residual matters: the effective lease is
+         * whatever the offset happens to be, so it SHIFTS BY AN HOUR AT EVERY DST BOUNDARY and
+         * changes if the instance's timezone is ever changed. The one-line real fix is to write
+         * `new GlideDateTime()` instead of `gs.nowDateTime()` in `claimBuild` / `finishBuild`
+         * (and audit the other `gs.nowDateTime()` calls in `SnAiControlService` for the same
+         * mistake). Left as a separate, deliberate change rather than folded in here.
+         */
+        script: "new SnAiControlService().ageOutStaleBuilds(1440);",
     },
 })

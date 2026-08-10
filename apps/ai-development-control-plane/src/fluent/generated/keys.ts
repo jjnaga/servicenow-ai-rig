@@ -199,6 +199,14 @@ declare global {
                         table: 'sys_ux_applicability_m2m_list'
                         id: 'c178eeb1c9be475082954e4a6ef826eb'
                     }
+                    'ai-control-claim-clock': {
+                        table: 'sys_atf_test'
+                        id: '2743398f4e6d48f08d16d5776e460995'
+                    }
+                    'ai-control-claim-clock-script': {
+                        table: 'sys_atf_step'
+                        id: '9acf98611c064f91aed8a55d40add8eb'
+                    }
                     'ai-control-completed-jobs': {
                         table: 'sys_ux_list'
                         id: '54660ce7840247e9a3a29a2e12ab07cd'
@@ -900,6 +908,10 @@ declare global {
                         table: 'sys_module'
                         id: '3a52484a351c4ce58c91fed7f935a5c9'
                     }
+                    'src_server_atf_claim-clock_server_js': {
+                        table: 'sys_module'
+                        id: 'a51c871b3ed5408281eaaad8327bbe08'
+                    }
                     'src_server_atf_lifecycle-control_server_js': {
                         table: 'sys_module'
                         id: 'bb2c93e4645b4a68944417ff44afaffd'
@@ -1461,6 +1473,14 @@ declare global {
                         key: {
                             name: 'u_sn_agent_job'
                             element: 'u_state'
+                        }
+                    },
+                    {
+                        table: 'sys_variable_value'
+                        id: '282eae3155b047a2860369a45948a389'
+                        key: {
+                            document_key: '9acf98611c064f91aed8a55d40add8eb'
+                            variable: '989d9e235324220002c6435723dc3484'
                         }
                     },
                     {
@@ -3971,6 +3991,14 @@ declare global {
                         id: 'df237eaa39494c0dbce61d2d238d9103'
                         key: {
                             document_key: '4dc0dbdf4519479c9212404d97c06870'
+                            variable: '42f2564b73031300440211d8faf6a777'
+                        }
+                    },
+                    {
+                        table: 'sys_variable_value'
+                        id: 'dfabec7cec8f42aba1bd91c4f4c78e46'
+                        key: {
+                            document_key: '9acf98611c064f91aed8a55d40add8eb'
                             variable: '42f2564b73031300440211d8faf6a777'
                         }
                     },

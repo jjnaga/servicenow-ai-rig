@@ -41,9 +41,28 @@ export const securityBoundary = Test({
     atf.server.runServerSideScript({ $id: Now.ID['ai-control-security-runner-gate-denied'], script: "var r=new GlideRecordSecure('u_sn_enhancement'); r.addQuery('short_description','ATF security boundary'); r.orderByDesc('sys_created_on'); r.setLimit(1); r.query(); if(!r.next()) throw 'enhancement fixture missing'; if(r.getElement('u_gate_1_decision').canWrite()) throw 'runner can write Gate 1'; r.setValue('u_gate_1_decision','approved'); r.update(); var c=new GlideRecord('u_sn_enhancement'); c.get(r.getUniqueValue()); if(c.getValue('u_gate_1_decision')!=='pending') throw 'runner changed Gate 1';" })
     // The runner's whole write surface is now four columns on the enhancement. Prove it can
     // reach every one of them and still cannot reach a gate (asserted in the step above).
-    atf.server.runServerSideScript({ $id: Now.ID['ai-control-security-runner-claim'], script: "var r=new GlideRecordSecure('u_sn_enhancement'); r.addQuery('short_description','ATF security boundary'); r.orderByDesc('sys_created_on'); r.setLimit(1); r.query(); if(!r.next()) throw 'enhancement fixture missing'; var fields=['u_phase','work_start','work_end','u_evidence_summary']; for(var i=0;i<fields.length;i++){if(!r.getElement(fields[i]).canWrite()) throw 'runner cannot write '+fields[i];} r.setValue('u_phase','build'); r.setValue('work_start',gs.nowDateTime()); var id=r.update(); if(!id) throw 'runner claim failed: '+r.getLastErrorMessage(); var c=new GlideRecord('u_sn_enhancement'); c.get(r.getUniqueValue()); if(c.getValue('u_phase')!=='build') throw 'runner claim did not persist'; if(c.getValue('u_gate_1_decision')!=='pending') throw 'gate moved during a claim';" })
+    atf.server.runServerSideScript({ $id: Now.ID['ai-control-security-runner-claim'], script: "var r=new GlideRecordSecure('u_sn_enhancement'); r.addQuery('short_description','ATF security boundary'); r.orderByDesc('sys_created_on'); r.setLimit(1); r.query(); if(!r.next()) throw 'enhancement fixture missing'; var fields=['u_phase','work_start','work_end','u_evidence_summary']; for(var i=0;i<fields.length;i++){if(!r.getElement(fields[i]).canWrite()) throw 'runner cannot write '+fields[i];} r.setValue('u_phase','build'); r.setValue('work_start',new GlideDateTime().getValue()); var id=r.update(); if(!id) throw 'runner claim failed: '+r.getLastErrorMessage(); var c=new GlideRecord('u_sn_enhancement'); c.get(r.getUniqueValue()); if(c.getValue('u_phase')!=='build') throw 'runner claim did not persist'; if(c.getValue('u_gate_1_decision')!=='pending') throw 'gate moved during a claim';" })
     atf.server.recordValidation({ $id: Now.ID['ai-control-security-claim-valid'], table: 'u_sn_enhancement', recordId: enhancement.record_id, fieldValues: 'u_phase=build^u_gate_1_decision=pending', enforceSecurity: true })
     atf.server.impersonate({ $id: Now.ID['ai-control-security-admin'], user: '6816f79cc0a8016401c5a33be04be441' })
     atf.server.recordDelete({ $id: Now.ID['ai-control-security-spec-delete'], table: 'u_sn_spec_version', recordId: spec.record_id, enforceSecurity: false })
     atf.server.recordDelete({ $id: Now.ID['ai-control-security-enhancement-delete'], table: 'u_sn_enhancement', recordId: enhancement.record_id, enforceSecurity: false })
+})
+
+/**
+ * Added 2026-08-09 after TASK0020425 was aged out ~7 minutes into a live build.
+ *
+ * The lease was never in force: `claimBuild` stamped `work_start` with `gs.nowDateTime()`
+ * (session-local) into a UTC-compared field, so a fresh claim already satisfied
+ * `work_start < gs.minutesAgo(60)`. Nothing failed — the sweeper simply ate every build.
+ *
+ * This pins the arithmetic rather than the code: it claims a record and asserts the stamped
+ * `work_start` is within a couple of minutes of UTC now, AND that the sweeper's own clause does
+ * not match a claim that was made seconds ago. The second assertion is the one that matters —
+ * it is the exact comparison that was broken, expressed as a test.
+ */
+export const claimClock = Test({
+    $id: Now.ID['ai-control-claim-clock'], name: 'AI control: a fresh claim is not instantly stale', active: true,
+    description: 'Regression pin for the session-local-vs-UTC clock bug that made the build lease effectively negative.', failOnServerError: true,
+}, atf => {
+    atf.server.runServerSideScript({ $id: Now.ID['ai-control-claim-clock-script'], script: Now.include('../../server/atf/claim-clock.server.js') })
 })
