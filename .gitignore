@@ -26,6 +26,18 @@ vendor/
 enhancements/*
 !enhancements/loop.md
 
+# Fluent apps built to DELIVER an enhancement. The rig's own apps ship — a stranger can
+# install them on their instance and they do something. A ticket's app cannot: it is
+# wired to our sys_ids (our business applications, our users, our groups, our vendors),
+# so on anyone else's instance it is a pile of dangling references. Same line as
+# enhancements/* — the contract ships, the ticket never does.
+#
+# Allowlist, not blocklist, deliberately: the next enhancement scaffolds an app nobody
+# remembers to add a rule for, and the default has to be "stays" or that app is the hole.
+# Adding a rig app is one line here, and that line is a decision someone made on purpose.
+apps/*
+!apps/ai-development-control-plane/
+
 # Run journals, by name, anywhere. These are the arc, not the product.
 **/BUILD_JOURNAL.md
 **/NEXT_AGENT_PROMPT.md

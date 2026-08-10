@@ -495,8 +495,8 @@ Implement in Python 3 standard library unless an existing repo dependency clearl
   result artifact and cannot edit files outside a temporary fixture directory.
 - **claude:** primary runtime adapter; command construction is hardcoded and takes the prompt via a
   file/stdin, not shell interpolation.
-- **codex:** peer adapter with the same contract. invoke the CLI non-interactively where
-  appropriate; preserve its journal protocol.
+- **codex:** peer adapter with the same contract; invoke the CLI non-interactively and keep a
+  per-run journal.
 
 Provider selection comes from a local config allowlist, never a ServiceNow text field. Model output
 is untrusted until artifacts/tests/read-back prove it.
