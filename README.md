@@ -150,7 +150,7 @@ step fails — is in [`enhancements/loop.md`](enhancements/loop.md).
 | `scripts/sn-publish` | Turn a built application into one named, promotable update set |
 | `scripts/sn-init` | Wire an instance from scratch |
 | `enhancements/` | The loop contract, and a folder per enhancement as it is worked |
-| `examples/` | One real enhancement, end to end: intake document → spec → package |
+| `examples/` | One real enhancement, end to end: intake document → spec → package — plus `sn-map-output-sample.md`, an unedited `/sn-map` profile so you can see what discovery produces before running it. It is a sample, never grounding: yours is generated to `codex/instance-profile.md` and describes only your instance |
 | `apps/ai-development-control-plane/` | **Optional.** A ServiceNow app that moves the human's review surface onto the platform: versioned Markdown specs, a hash-frozen approval, and a worker that claims work off the enhancement's own phase. The loop works without it — see its `codex/APP.md`. |
 
 ## The thing worth knowing
