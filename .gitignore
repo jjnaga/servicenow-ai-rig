@@ -10,12 +10,25 @@ vendor/
 **/target/
 **/.npm-cache/
 
-# Evidence that is large or binary: screenshots and terminal recordings are part of a
-# package's evidence manifest but are not versioned. The package file records their
-# names and sizes.
-**/evidence/*.png
-**/evidence/*.cast
-**/evidence/*.mov
+# THE LINE: what ships is what a stranger can RUN. What stays is what only makes sense
+# to us — anything derived from our instance, our tickets, or our run history. See
+# CLAUDE.md § What ships and what stays. Every rule below is one instance of that line.
+
+# Evidence is a receipt taken by one operator against one instance. It cannot be
+# verified by anyone else, it goes stale the moment the thing it describes changes, and
+# a stale receipt is worse than no receipt in a repo whose whole pitch is "never trust a
+# success message". Directory-wide, at any depth, so a future app inherits the rule
+# instead of needing its own line.
+**/evidence/
+
+# Per-enhancement working output: real tickets, real business-unit content, our specs
+# and packages. The loop CONTRACT ships (the skills read it); the tickets never do.
+enhancements/*
+!enhancements/loop.md
+
+# Run journals, by name, anywhere. These are the arc, not the product.
+**/BUILD_JOURNAL.md
+**/NEXT_AGENT_PROMPT.md
 
 # Documents the requester attached to the ticket. The loop downloads them here and reads
 # them; they belong to the business unit that sent them, not to this repo. Read in place,
@@ -41,13 +54,6 @@ HEAD_STATE.md
 data/
 .agents/
 
-# The control plane ships as a product; its RUN RECORD does not. Same placement test as the
-# rest of the repo: could a stranger with their own instance use this? → ship it. Does it only
-# make sense to someone who knows why we did it? → it stays local. Receipts, screenshots and
-# the dated build journal are ours; the source, the runner and the codex are theirs.
-apps/ai-development-control-plane/evidence/
-apps/ai-development-control-plane/BUILD_JOURNAL.md
-apps/ai-development-control-plane/NEXT_AGENT_PROMPT.md
 
 # Recording leftovers
 *.cast
