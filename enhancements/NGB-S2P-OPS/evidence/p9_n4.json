@@ -1,0 +1,28 @@
+{
+ "pr": "PR0001026",
+ "cost_centre_plans": 2,
+ "plans": [
+  {
+   "plan": "APLN0001065",
+   "state": "4",
+   "rule": "NGB PR - Cost centre owner",
+   "approver_list": [],
+   "amount": null,
+   "group": null,
+   "sequence": "1",
+   "type": null,
+   "approvers": []
+  },
+  {
+   "plan": "APLN0001066",
+   "state": "2",
+   "rule": "NGB PR - Cost centre owner",
+   "approver_list": [],
+   "amount": null,
+   "group": null,
+   "sequence": "2",
+   "type": null,
+   "approvers": []
+  }
+ ]
+}

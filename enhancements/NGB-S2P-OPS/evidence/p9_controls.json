@@ -1,0 +1,82 @@
+{
+ "access_probes": {
+  "N1_acme_on_ngb_PR": "found=false",
+  "N3b_ap_operator_invoice_write": "found=true canRead=true canWrite=true",
+  "N3_ap_operator_payment": "found=false",
+  "N3b_nonoperator_invoice_write": "found=true canRead=true canWrite=false",
+  "N3_procurement_specialist_payment": "found=true canRead=true canWrite=false field[bank_name]=\"Windward National Bank\"",
+  "N3_plain_requester_payment": "found=false",
+  "N3_named_custodian_payment": "found=true canRead=true canWrite=true field[bank_name]=\"Windward National Bank\""
+ },
+ "N2": {
+  "J1": {
+   "requester": "klum",
+   "approvers": [
+    "jnagahama"
+   ],
+   "self_approval": false
+  },
+  "J2": {
+   "requester": "lyagi",
+   "approvers": [
+    "aquintal",
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis",
+    "tkaaihue"
+   ],
+   "self_approval": false
+  },
+  "J3": {
+   "requester": "kduldulao",
+   "approvers": [
+    "bmiyashiro",
+    "bokazaki",
+    "ekim",
+    "gancheta",
+    "iarakaki",
+    "jvaldez",
+    "kpark",
+    "mhironaka",
+    "rmanliguis",
+    "scorrea",
+    "tkaaihue"
+   ],
+   "self_approval": false
+  },
+  "J4": {
+   "requester": "tkaaihue",
+   "approvers": [
+    "bmiyashiro",
+    "bokazaki",
+    "ekim",
+    "gancheta",
+    "jvaldez",
+    "knakamura",
+    "kpark",
+    "mhironaka",
+    "rmanliguis",
+    "scorrea"
+   ],
+   "self_approval": false
+  }
+ },
+ "N2_rule_flags": {
+  "total": 6,
+  "self_approval_enabled": []
+ },
+ "N4": {
+  "blank": [],
+  "control_with_cost_centre": 2
+ },
+ "N5": {
+  "erp_source": {
+   "short_description": "MANUAL HANDOFF - NOT AN INTEGRATION. Rec",
+   "active": "true",
+   "source": "NGB-MANUAL-AP"
+  },
+  "claims_automation": false,
+  "suspect_reports": []
+ }
+}

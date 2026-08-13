@@ -1,0 +1,221 @@
+{
+ "requisitions": {
+  "PR0001029": {
+   "journal_rows": 1,
+   "disclosure": true,
+   "approvers": [
+    "bmiyashiro",
+    "bokazaki",
+    "ekim",
+    "gancheta",
+    "jvaldez",
+    "knakamura",
+    "kpark",
+    "mhironaka",
+    "rmanliguis",
+    "scorrea"
+   ]
+  },
+  "PR0001024": {
+   "journal_rows": 1,
+   "disclosure": true,
+   "approvers": [
+    "bmiyashiro",
+    "bokazaki",
+    "ekim",
+    "gancheta",
+    "iarakaki",
+    "jvaldez",
+    "kpark",
+    "mhironaka",
+    "rmanliguis",
+    "scorrea",
+    "tkaaihue"
+   ]
+  },
+  "PR0001025": {
+   "journal_rows": 1,
+   "disclosure": true,
+   "approvers": [
+    "bmiyashiro",
+    "bokazaki",
+    "ekim",
+    "gancheta",
+    "jvaldez",
+    "knakamura",
+    "kpark",
+    "mhironaka",
+    "rmanliguis",
+    "scorrea"
+   ]
+  },
+  "PR0001023": {
+   "journal_rows": 1,
+   "disclosure": true,
+   "approvers": [
+    "aquintal",
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis",
+    "tkaaihue"
+   ]
+  },
+  "PR0001022": {
+   "journal_rows": 1,
+   "disclosure": true,
+   "approvers": [
+    "jnagahama"
+   ]
+  },
+  "PR0001028": {
+   "journal_rows": 1,
+   "disclosure": true,
+   "approvers": [
+    "aquintal",
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis",
+    "tkaaihue"
+   ]
+  }
+ },
+ "plans": {
+  "APLN0001089": {
+   "rule": "NGB PR - Procurement USD 100k+",
+   "approvers": [
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis"
+   ],
+   "disclosure": true
+  },
+  "APLN0001088": {
+   "rule": "NGB PR - Cost centre owner",
+   "approvers": [
+    "knakamura"
+   ],
+   "disclosure": true
+  },
+  "APLN0001064": {
+   "rule": "NGB PR - Finance risk trigger",
+   "approvers": [
+    "bmiyashiro",
+    "ekim",
+    "gancheta",
+    "kpark",
+    "scorrea"
+   ],
+   "disclosure": true
+  },
+  "APLN0001075": {
+   "rule": "NGB PR - Procurement USD 100k+",
+   "approvers": [
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis"
+   ],
+   "disclosure": true
+  },
+  "APLN0001074": {
+   "rule": "NGB PR - Cost centre owner",
+   "approvers": [
+    "aquintal"
+   ],
+   "disclosure": true
+  },
+  "APLN0001078": {
+   "rule": "NGB PR - Cost centre owner",
+   "approvers": [
+    "jnagahama"
+   ],
+   "disclosure": true
+  },
+  "APLN0001084": {
+   "rule": "NGB PR - Procurement USD 25k-100k",
+   "approvers": [
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis",
+    "tkaaihue"
+   ],
+   "disclosure": true
+  },
+  "APLN0001077": {
+   "rule": "NGB PR - Finance USD 100k+",
+   "approvers": [
+    "bmiyashiro",
+    "ekim",
+    "gancheta",
+    "kpark",
+    "scorrea"
+   ],
+   "disclosure": true
+  },
+  "APLN0001090": {
+   "rule": "NGB PR - Finance USD 100k+",
+   "approvers": [
+    "bmiyashiro",
+    "ekim",
+    "gancheta",
+    "kpark",
+    "scorrea"
+   ],
+   "disclosure": true
+  },
+  "APLN0001091": {
+   "rule": "NGB PR - Cost centre owner",
+   "approvers": [
+    "aquintal"
+   ],
+   "disclosure": true
+  },
+  "APLN0001062": {
+   "rule": "NGB PR - Cost centre owner",
+   "approvers": [
+    "iarakaki"
+   ],
+   "disclosure": true
+  },
+  "APLN0001063": {
+   "rule": "NGB PR - Procurement risk trigger",
+   "approvers": [
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis",
+    "tkaaihue"
+   ],
+   "disclosure": true
+  },
+  "APLN0001073": {
+   "rule": "NGB PR - Cost centre owner",
+   "approvers": [
+    "knakamura"
+   ],
+   "disclosure": true
+  },
+  "APLN0001076": {
+   "rule": "NGB PR - Procurement USD 25k-100k",
+   "approvers": [
+    "bokazaki",
+    "jvaldez",
+    "mhironaka",
+    "rmanliguis",
+    "tkaaihue"
+   ],
+   "disclosure": true
+  }
+ },
+ "failures": [],
+ "sample": {
+  "requisition": "PR0001029",
+  "created_by": "admin",
+  "created_on": "2026-08-12 12:42:00",
+  "value": "[APPROVAL DISCLOSURE][2026-08-13][build automation]\nApprovals on this requisition were RECORDED BY BUILD AUTOMATION ACTING FOR the named approver(s): bmiyashiro, bokazaki, ekim, gancheta, jvaldez, knakamura, kpark, mhironaka, rmanliguis, scorrea.\nAuthority: the pending NGB requisitions were reviewed and cleared by Tiare Kaaihue, Bruno Miyashiro and the cost-centre owners at the 2026-08-13 NGB standup, per the acceptance plan in BUSINESS_REQUIREMENTS.md section 8. Decided by those named humans; recorded by agent on their behalf.\nMechanism: server-side GlideImpersonate initiated from the admin build account. The platform raises no impersonation.start/end event for this lane, so sys_updated_by on the approval records names the approver only and does not show the automation. THIS NOTE IS THAT DISCLOSURE.\nScope: acceptance testing on synthetic NGB data. No real spend was authorised."
+ }
+}

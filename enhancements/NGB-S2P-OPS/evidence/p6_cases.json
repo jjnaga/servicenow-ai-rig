@@ -1,0 +1,101 @@
+{
+ "J6_inquiry": {
+  "short_description": "NGB J6 - which payment terms apply to a new island supplier?",
+  "assignment_group": "ed153588c3aec350aaafb71d05013165",
+  "purchase_request": "",
+  "due_date": "2026-08-16 06:59:59",
+  "case_type": "inquiry",
+  "active": "true",
+  "priority": "4",
+  "order_dependent_on_case": "no",
+  "number": "PC0001037",
+  "requested_by": "02fc3d0cc3220750aaafb71d05013128",
+  "supplier": "",
+  "sourcing_dependent_on_case": "no",
+  "state": "10",
+  "assigned_to": "a90dbd0cc3220750aaafb71d05013197"
+ },
+ "gl_coding_review": {
+  "short_description": "NGB - GL coding review for PR line accounting allocation",
+  "assignment_group": "ce0c34132d9a49669d3f507a326def5c",
+  "purchase_request": "4b6b2e5bc36e4b50aaafb71d050131d5",
+  "due_date": "2026-08-16 06:59:59",
+  "case_type": "gl_coding_review",
+  "active": "true",
+  "priority": "2",
+  "order_dependent_on_case": "yes",
+  "number": "PC0001038",
+  "requested_by": "02fc3d0cc3220750aaafb71d05013128",
+  "supplier": "",
+  "sourcing_dependent_on_case": "yes",
+  "state": "10",
+  "assigned_to": "72fc3d0cc3220750aaafb71d050131ba"
+ },
+ "budget_review": {
+  "short_description": "NGB - budget review, purchase not in the approved plan",
+  "assignment_group": "ce0c34132d9a49669d3f507a326def5c",
+  "purchase_request": "b59ba69bc36e4b50aaafb71d0501315a",
+  "due_date": "2026-08-16 06:59:59",
+  "case_type": "budget_review",
+  "active": "true",
+  "priority": "2",
+  "order_dependent_on_case": "yes",
+  "number": "PC0001039",
+  "requested_by": "02fc3d0cc3220750aaafb71d05013128",
+  "supplier": "",
+  "sourcing_dependent_on_case": "yes",
+  "state": "10",
+  "assigned_to": "72fc3d0cc3220750aaafb71d050131ba"
+ },
+ "delivery_address_review": {
+  "short_description": "NGB - nonstandard delivery address verification",
+  "assignment_group": "ed153588c3aec350aaafb71d05013165",
+  "purchase_request": "767b229bc36e4b50aaafb71d0501316a",
+  "due_date": "2026-08-16 06:59:59",
+  "case_type": "delivery_address_review",
+  "active": "true",
+  "priority": "2",
+  "order_dependent_on_case": "yes",
+  "number": "PC0001040",
+  "requested_by": "02fc3d0cc3220750aaafb71d05013128",
+  "supplier": "",
+  "sourcing_dependent_on_case": "yes",
+  "state": "10",
+  "assigned_to": "090dbd0cc3220750aaafb71d05013186"
+ },
+ "due_diligence": {
+  "order_dependent_on_case": "yes",
+  "number": "PC0001041",
+  "assignment_group": "ed153588c3aec350aaafb71d05013165",
+  "qualification_needed": "yes",
+  "supplier": "064dda1fc3aa4b50aaafb71d05013122",
+  "sourcing_dependent_on_case": "yes",
+  "case_type": "due_diligence",
+  "state": "10",
+  "assigned_to": "000d7d0cc3220750aaafb71d050131a8"
+ },
+ "modifications": {
+  "runner": [
+   "MOD edit_purchase as=klum pr=PR0001022 created=undefined",
+   "MOD return_purchase as=tkaaihue pr=PR0001025 created=undefined",
+   "MOD edit_receipt as=lyagi pr=PR0001023 created=undefined"
+  ],
+  "rows": [
+   {
+    "reason": "one switch dead on arrival",
+    "business_owner": "000d7d0cc3220750aaafb71d050131a8",
+    "purchase_request": "b59ba69bc36e4b50aaafb71d0501315a"
+   },
+   {
+    "reason": "service period corrected",
+    "business_owner": "81fcf90cc3220750aaafb71d05013191",
+    "purchase_request": "767b229bc36e4b50aaafb71d0501316a"
+   },
+   {
+    "reason": "quantity increase from 8 to 10 desks",
+    "business_owner": "02fc3d0cc3220750aaafb71d05013128",
+    "purchase_request": "4b6b2e5bc36e4b50aaafb71d050131d5"
+   }
+  ]
+ }
+}

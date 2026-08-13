@@ -89,7 +89,7 @@ Final source digest is `55b6944bb98b64441b1b4f00355a3b785329c7e1e086fc767b82aef9
 (recipe unrecorded — see the digest scar below).
 
 Authoritative counts, fixture IDs, ATF/browser receipts, rollback, indexes, and the acceptance
-matrix live in `../evidence/` — start at `../evidence/handoff.md`. `../BUILD_JOURNAL.md` carries
+matrix live in `../evidence/` (local run records — not in this repository) — start at `../evidence/handoff.md`. `../BUILD_JOURNAL.md` carries
 the dated execution entries. This supersedes the blank-state baseline below for pickup; the
 baseline remains the born-red receipt.
 
@@ -474,10 +474,10 @@ When a zero is load-bearing, re-run it with `command grep` (or an explicit path)
 
 | Need | Start |
 |---|---|
-| What is proven, what is not | `../evidence/handoff.md` |
+| What is proven, what is not | `../evidence/handoff.md` (local, not shipped) |
 | Full product behavior and acceptance | `../SPEC.md` |
 | Agent authority and hard walls | `../AGENTS.md` |
-| Cold pickup | `../HEAD_STATE.md` |
+| Cold pickup | `../HEAD_STATE.md` (local, not shipped) |
 | Platform scars/details | parent `../../../codex/servicenow.md` |
 | Enhancement gates/work notes | parent `../../../enhancements/loop.md` |
 | Machine/PDI preflight | parent `../../../scripts/sn-init --check` |

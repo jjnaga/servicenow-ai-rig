@@ -1,0 +1,19 @@
+{
+ "pr": "PR0001027",
+ "pr_sys_id": "cb29f693c3228b50aaafb71d050131b3",
+ "line": "61497e93c3228b50aaafb71d05013120",
+ "po": "PO0001002",
+ "po_sys_id": "d03a3e57c3228b50aaafb71d05013120",
+ "requester": "klum",
+ "approver": "jnagahama",
+ "log": [
+  "J1R requester=klum cost centre=Corporate & Shared Services approver=jnagahama",
+  "  requisition PR0001027",
+  "  J1R line=61497e93c3228b50aaafb71d05013120",
+  "  line PRL0001028 priced $10,000.00",
+  "  J1R allocation pct=100 amount=$0.00",
+  "  J1R VALIDATE -> true",
+  "  J1R ORDER order_id=d03a3e57c3228b50aaafb71d05013120",
+  "  REQ-029 PO PO0001002 status=ordered lines=1 lineage_to=PR0001027"
+ ]
+}

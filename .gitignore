@@ -12,7 +12,7 @@ vendor/
 
 # THE LINE: what ships is what a stranger can RUN. What stays is what only makes sense
 # to us — anything derived from our instance, our tickets, or our run history. See
-# CLAUDE.md § What ships and what stays. Every rule below is one instance of that line.
+# CLAUDE.md INVARIANT 8. Every rule below is one instance of that line.
 
 # Evidence is a receipt taken by one operator against one instance. It cannot be
 # verified by anyone else, it goes stale the moment the thing it describes changes, and
@@ -25,6 +25,8 @@ vendor/
 # and packages. The loop CONTRACT ships (the skills read it); the tickets never do.
 enhancements/*
 !enhancements/loop.md
+!enhancements/NGB-S2P-OPS/
+!enhancements/NGB-S2P-OPS/**
 
 # Fluent apps built to DELIVER an enhancement. The rig's own apps ship — a stranger can
 # install them on their instance and they do something. A ticket's app cannot: it is
@@ -38,7 +40,7 @@ enhancements/*
 apps/*
 !apps/ai-development-control-plane/
 
-# Run journals, by name, anywhere. These are the arc, not the product.
+# Run journals, by name, anywhere. These are run history, not the product.
 **/BUILD_JOURNAL.md
 **/NEXT_AGENT_PROMPT.md
 
@@ -60,8 +62,8 @@ id_rsa*
 codex/instance-profile.md
 __pycache__/
 
-# Working state of the current build-out — lives with the experiment's own record, not in
-# the shipped product. A fresh clone starts with CLAUDE.md and the codex, not our head-state.
+# Working state of the current build-out — a local run record, not part of
+# the shipped product. A fresh clone starts with CLAUDE.md and the codex.
 HEAD_STATE.md
 data/
 .agents/
@@ -71,3 +73,6 @@ data/
 *.cast
 *.orig
 .DS_Store
+
+# the S2P run recording ships (authorized 2026-08-12)
+!enhancements/NGB-S2P-OPS/run.cast

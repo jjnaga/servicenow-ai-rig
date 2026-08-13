@@ -1,0 +1,451 @@
+{
+ "J1": {
+  "desc": "J1 existing supplier USD 10,000 goods",
+  "pr_sys_id": "4b6b2e5bc36e4b50aaafb71d050131d5",
+  "purchase": "766b2e5bc36e4b50aaafb71d050131aa",
+  "requester": "klum",
+  "requester_email": "kimo.lum@nagahama.example",
+  "cost_centre": "Corporate & Shared Services",
+  "cost_centre_account": "8000",
+  "cost_centre_manager": "jnagahama",
+  "supplier": "Pacific Office Solutions LLC",
+  "expected_total": 10000,
+  "number": "PR0001022",
+  "total_display": "$10,000.00",
+  "state": "Pending Approval",
+  "approvals": {
+   "plans": [
+    {
+     "plan": "APLN0001047",
+     "state": "4",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "jnagahama"
+     ],
+     "amount": null,
+     "group": null,
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001058",
+     "state": "2",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "jnagahama"
+     ],
+     "amount": null,
+     "group": null,
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    }
+   ],
+   "group_plans": [],
+   "sysapproval_approver": [
+    {
+     "user": "jnagahama",
+     "state": "not_required"
+    },
+    {
+     "user": "jnagahama",
+     "state": "requested"
+    }
+   ]
+  }
+ },
+ "J2": {
+  "desc": "J2 quote-backed USD 30,000 service",
+  "pr_sys_id": "767b229bc36e4b50aaafb71d0501316a",
+  "purchase": "de7bee5bc36e4b50aaafb71d050131bd",
+  "requester": "lyagi",
+  "requester_email": "lani.yagi@nagahama.example",
+  "cost_centre": "Facilities",
+  "cost_centre_account": "8100",
+  "cost_centre_manager": "aquintal",
+  "supplier": "Kaimuki Facilities Services Inc",
+  "expected_total": 30000,
+  "number": "PR0001023",
+  "total_display": "$30,000.00",
+  "state": "Pending Approval",
+  "approvals": {
+   "plans": [
+    {
+     "plan": "APLN0001049",
+     "state": "4",
+     "rule": "NGB PR - Procurement USD 25k-100k",
+     "approver_list": [
+      "mhironaka",
+      "tkaaihue",
+      "rmanliguis",
+      "bokazaki",
+      "jvaldez"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 2 - CC then Procurement",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001048",
+     "state": "4",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "aquintal"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 2 - CC then Procurement",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001057",
+     "state": "1",
+     "rule": "NGB PR - Procurement USD 25k-100k",
+     "approver_list": [
+      "mhironaka",
+      "tkaaihue",
+      "rmanliguis",
+      "bokazaki",
+      "jvaldez"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 2 - CC then Procurement",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001056",
+     "state": "2",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "aquintal"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 2 - CC then Procurement",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    }
+   ],
+   "group_plans": [
+    {
+     "resume": "false",
+     "number": "AGPLN0001013",
+     "sequence": "1",
+     "state": "closed_incomplete",
+     "approval_group": "f9dd169fc3aa4b50aaafb71d050131b4"
+    },
+    {
+     "resume": "false",
+     "number": "AGPLN0001016",
+     "sequence": "2",
+     "state": "work_in_progress",
+     "approval_group": "f9dd169fc3aa4b50aaafb71d050131b4"
+    }
+   ],
+   "sysapproval_approver": [
+    {
+     "user": "aquintal",
+     "state": "not_required"
+    },
+    {
+     "user": "aquintal",
+     "state": "requested"
+    }
+   ]
+  }
+ },
+ "J3": {
+  "desc": "J3 new supplier USD 20,000 off-catalog",
+  "pr_sys_id": "968ba29bc36e4b50aaafb71d050131eb",
+  "purchase": "8e8ba29bc36e4b50aaafb71d050131ce",
+  "requester": "kduldulao",
+  "requester_email": "keola.duldulao@nagahama.example",
+  "cost_centre": "Water",
+  "cost_centre_account": "2000",
+  "cost_centre_manager": "iarakaki",
+  "supplier": "Hookele Advisory Partners LLC",
+  "expected_total": 20000,
+  "number": "PR0001024",
+  "total_display": "$20,000.00",
+  "state": "Pending Approval",
+  "approvals": {
+   "plans": [
+    {
+     "plan": "APLN0001052",
+     "state": "4",
+     "rule": "NGB PR - Finance risk trigger",
+     "approver_list": [
+      "bmiyashiro",
+      "ekim",
+      "kpark",
+      "scorrea",
+      "gancheta"
+     ],
+     "amount": null,
+     "group": "NGB PR Risk - CC Proc Finance",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001050",
+     "state": "4",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "iarakaki"
+     ],
+     "amount": null,
+     "group": "NGB PR Risk - CC Proc Finance",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001051",
+     "state": "4",
+     "rule": "NGB PR - Procurement risk trigger",
+     "approver_list": [
+      "mhironaka",
+      "tkaaihue",
+      "rmanliguis",
+      "bokazaki",
+      "jvaldez"
+     ],
+     "amount": null,
+     "group": "NGB PR Risk - CC Proc Finance",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001064",
+     "state": "1",
+     "rule": "NGB PR - Finance risk trigger",
+     "approver_list": [
+      "bmiyashiro",
+      "ekim",
+      "kpark",
+      "scorrea",
+      "gancheta"
+     ],
+     "amount": null,
+     "group": "NGB PR Risk - CC Proc Finance",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001062",
+     "state": "2",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "iarakaki"
+     ],
+     "amount": null,
+     "group": "NGB PR Risk - CC Proc Finance",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001063",
+     "state": "1",
+     "rule": "NGB PR - Procurement risk trigger",
+     "approver_list": [
+      "mhironaka",
+      "tkaaihue",
+      "rmanliguis",
+      "bokazaki",
+      "jvaldez"
+     ],
+     "amount": null,
+     "group": "NGB PR Risk - CC Proc Finance",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    }
+   ],
+   "group_plans": [
+    {
+     "resume": "false",
+     "number": "AGPLN0001018",
+     "sequence": "2",
+     "state": "work_in_progress",
+     "approval_group": "e7dd969fc3aa4b50aaafb71d05013145"
+    },
+    {
+     "resume": "false",
+     "number": "AGPLN0001014",
+     "sequence": "1",
+     "state": "closed_incomplete",
+     "approval_group": "e7dd969fc3aa4b50aaafb71d05013145"
+    }
+   ],
+   "sysapproval_approver": [
+    {
+     "user": "iarakaki",
+     "state": "not_required"
+    },
+    {
+     "user": "iarakaki",
+     "state": "requested"
+    }
+   ]
+  }
+ },
+ "J4": {
+  "desc": "J4 existing supplier USD 120,000",
+  "pr_sys_id": "b59ba69bc36e4b50aaafb71d0501315a",
+  "purchase": "099b669bc36e4b50aaafb71d050131c1",
+  "requester": "tkaaihue",
+  "requester_email": "tiare.kaaihue@nagahama.example",
+  "cost_centre": "Technology",
+  "cost_centre_account": "1000",
+  "cost_centre_manager": "knakamura",
+  "supplier": "Mauka Data Systems LLC",
+  "expected_total": 120000,
+  "number": "PR0001025",
+  "total_display": "$120,000.00",
+  "state": "Pending Approval",
+  "approvals": {
+   "plans": [
+    {
+     "plan": "APLN0001054",
+     "state": "4",
+     "rule": "NGB PR - Procurement USD 100k+",
+     "approver_list": [
+      "mhironaka",
+      "rmanliguis",
+      "bokazaki",
+      "jvaldez"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 3 - CC Proc Finance",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001055",
+     "state": "4",
+     "rule": "NGB PR - Finance USD 100k+",
+     "approver_list": [
+      "bmiyashiro",
+      "ekim",
+      "kpark",
+      "scorrea",
+      "gancheta"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 3 - CC Proc Finance",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001053",
+     "state": "2",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "knakamura"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 3 - CC Proc Finance",
+     "sequence": "1",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001059",
+     "state": "2",
+     "rule": "NGB PR - Cost centre owner",
+     "approver_list": [
+      "knakamura"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 3 - CC Proc Finance",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001060",
+     "state": "2",
+     "rule": "NGB PR - Procurement USD 100k+",
+     "approver_list": [
+      "mhironaka",
+      "rmanliguis",
+      "bokazaki",
+      "jvaldez"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 3 - CC Proc Finance",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    },
+    {
+     "plan": "APLN0001061",
+     "state": "1",
+     "rule": "NGB PR - Finance USD 100k+",
+     "approver_list": [
+      "bmiyashiro",
+      "ekim",
+      "kpark",
+      "scorrea",
+      "gancheta"
+     ],
+     "amount": null,
+     "group": "NGB PR Tier 3 - CC Proc Finance",
+     "sequence": "2",
+     "type": null,
+     "approvers": []
+    }
+   ],
+   "group_plans": [
+    {
+     "resume": "false",
+     "number": "AGPLN0001015",
+     "sequence": "1",
+     "state": "closed_incomplete",
+     "approval_group": "eadd569fc3aa4b50aaafb71d0501319e"
+    },
+    {
+     "resume": "false",
+     "number": "AGPLN0001017",
+     "sequence": "2",
+     "state": "work_in_progress",
+     "approval_group": "eadd569fc3aa4b50aaafb71d0501319e"
+    }
+   ],
+   "sysapproval_approver": [
+    {
+     "user": "knakamura",
+     "state": "requested"
+    },
+    {
+     "user": "jvaldez",
+     "state": "requested"
+    },
+    {
+     "user": "mhironaka",
+     "state": "requested"
+    },
+    {
+     "user": "bokazaki",
+     "state": "requested"
+    },
+    {
+     "user": "rmanliguis",
+     "state": "requested"
+    }
+   ]
+  }
+ }
+}

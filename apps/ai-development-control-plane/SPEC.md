@@ -21,7 +21,7 @@ one-and-exit — stands unchanged and is what survived. The current design of re
 The v0 specified below is implemented, installed, and fully evidenced on the authorized
 developer PDI. Closeout finished on 2026-08-09: the last open receipt (index
 metadata) is closed, installed state was re-derived from the PDI rather than trusted, and every
-acceptance criterion is mapped to a verdict in [`evidence/handoff.md`](evidence/handoff.md). The
+acceptance criterion is mapped to a verdict in `evidence/handoff.md` (local run record, not in this repository). The
 installed source digest is `55b6944bb98b64441b1b4f00355a3b785329c7e1e086fc767b82aef9359b7e45`,
 re-computed on 2026-08-09 and identical — the tree is byte-identical to the install candidate.
 
@@ -624,7 +624,7 @@ apps/ai-development-control-plane/
 2. Create native UI actions plus required Workspace integration records.
 3. Build the single React workbench with sanitized preview and Control API calls.
 4. Create events/notifications and role-aware empty/failure messages.
-5. Self-critique the UI plan against `frontend-structural`/`frontend-design` before build.
+5. Self-critique the UI plan's structure and design deliberately before build.
 
 ### Phase 5: runner slice
 
@@ -737,4 +737,4 @@ instance whose SMTP is disabled; the composite index's unique flag has functiona
 metadata receipt, because no read-only surface on this platform exposes one; role behaviour is
 proven by ATF under `GlideRecordSecure` rather than by a non-admin browser session; and no
 model-backed adapter has ever run. Each is listed with its consequence in
-[`evidence/handoff.md`](evidence/handoff.md).
+`evidence/handoff.md` (local run record, not in this repository).

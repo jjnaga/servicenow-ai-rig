@@ -1,0 +1,81 @@
+{
+ "results": {
+  "supplier_product": {
+   "product_type": "service",
+   "name": "Quarterly HVAC Maintenance Programme",
+   "sku": "KFS-HVAC-Q",
+   "services_ack": "invoice_approval",
+   "goods_receipt_required": "no"
+  },
+  "j2_line": {
+   "number": "PRL0001029",
+   "product_type": "service",
+   "state": "pending_approval",
+   "services_ack": "invoice_approval",
+   "goods_receipt_required": "no"
+  },
+  "j2_approvals": [],
+  "j4_approvals": [],
+  "orders": {
+   "J2R": null,
+   "J4R": {
+    "sys_id": "c9e2875fc3628b50aaafb71d050131f6",
+    "number": "PO0001003",
+    "status": "delivered"
+   }
+  },
+  "receipts": {
+   "J4R": {
+    "number": {
+     "display_value": "POL0001003",
+     "value": "POL0001003"
+    },
+    "received_amount": {
+     "display_value": "$240,000.00",
+     "currency_display_value": "USD;240000",
+     "value": "a313079fc3628b50aaafb71d05013184"
+    },
+    "state": {
+     "display_value": "ordered",
+     "value": "ordered"
+    },
+    "received_quantity": {
+     "display_value": "8",
+     "value": "8"
+    },
+    "purchased_quantity": {
+     "display_value": "4",
+     "value": "4"
+    },
+    "received_percentage": {
+     "display_value": "200",
+     "value": "200"
+    }
+   }
+  }
+ },
+ "log": [
+  "repair 1 supplier product KFS-HVAC-Q: product_type='service' services_ack='invoice_approval' goods_receipt='no'",
+  "repair 1b line PRL0001029: product_type='service' services_ack='invoice_approval' goods_receipt='no'",
+  "\n=== J2R approvals (polling for late tasks) ===",
+  "    ROUNDDONE 0",
+  "    ROUNDDONE 0",
+  "\n=== J4R approvals ===",
+  "    ROUNDDONE 0",
+  "    ROUNDDONE 0",
+  "\n=== purchase orders ===",
+  "    ORDER order_id=null",
+  "    VALIDATE true prState=20 approval=not requested",
+  "    J2R ORDER order_id=null",
+  "    J2R VALIDATE true prState=20 approval=not requested",
+  "    ORDER order_id=null",
+  "    VALIDATE true prState=50 approval=not requested",
+  "    J4R ORDER order_id=null",
+  "    J4R VALIDATE true prState=50 approval=not requested",
+  "  J2R PR0001028 -> NO PURCHASE ORDER",
+  "  J4R PR0001029 -> PO0001003",
+  "\n=== receipts / service acknowledgement (REQ-031) ===",
+  "  J2R: no order, nothing to receive",
+  "    RECEIVED POL0001003 qty=8/4 amount=$240,000.00 pct=200 state=ordered"
+ ]
+}

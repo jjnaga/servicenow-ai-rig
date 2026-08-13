@@ -50,9 +50,9 @@ Read in this exact order:
 If a required skill applies, read its complete `SKILL.md` before work. In particular:
 
 - use `servicenow-sdk:now-sdk` for all Fluent/SDK work;
-- use `frontend-structural` and `frontend-design` before any UI source;
-- use `cover` for tests and prove them, not merely author them;
-- use `right-sizing` to keep the implementation complete without speculative layers.
+- before any UI source, plan structure and design deliberately rather than improvising;
+- prove tests, not merely author them — a test that cannot fail proves nothing;
+- keep the implementation complete without speculative layers.
 
 ## Authority this contract grants
 
@@ -95,8 +95,7 @@ roles, ACLs, and collisions the artifact uses. Record the narrow evidence in the
 - Read back every write. HTTP success and SDK “installed” output are not evidence.
 - Never retry a POST blindly. Every create path needs a deterministic idempotency key.
 - Never use an unresolved dot-walk to scope a destructive operation.
-- Preserve unrelated dirty files. At handoff creation they were `scripts/sn-init`, `.agents/`, and
-  `scripts/__pycache__/`; they are not part of this app.
+- Preserve unrelated dirty files in the working tree; they are not part of this app.
 
 ## Source and delivery law
 
@@ -162,11 +161,11 @@ No test means not done.
 - Use Playwright-over-CDP for Workspace/workbench verification after authoritative read-back.
 - Prove the runner with a deterministic fixture adapter before invoking a real model.
 - Prove the test can fail: born-red is preferred; otherwise mutation-prove the assertion.
-- Classify authored tests GOOD/GOOD before accepting them. Record any honest waiver.
+- Before accepting a test, confirm it both exercises the behavior AND can fail when the behavior breaks. Record any honest waiver.
 
 ## Audit and handoff
 
-- Prepend every system mutation to the relevant audit log in HST.
+- Prepend every system mutation to the project's audit log, timestamped in one named timezone.
 - Keep `BUILD_JOURNAL.md` inside this directory with commands, artifact counts, read-backs, test run
   IDs, fixture results, screenshots, gaps, and rollback context. Never include secrets.
 - Log edits to agent files wherever the parent repository records its run journal.
@@ -176,7 +175,7 @@ No test means not done.
 - A useful discovery is unfinished until it is written into the repository at the right scope:
   app behavior/scars in `codex/APP.md`, reusable rig truth in the parent `codex/servicenow.md`,
   agent law here, current pickup in `HEAD_STATE.md`, and execution receipts in
-  `BUILD_JOURNAL.md`/`evidence/`. One home per fact; link instead of duplicating.
+  `BUILD_JOURNAL.md`/`evidence/` (local run records — not in this repository). One home per fact; link instead of duplicating.
 - Before final response, re-read every human-authored context file under this directory and update
   stale status, paths, design claims, gaps, and reading order. The repository—not the transcript—
   is the durable handoff.

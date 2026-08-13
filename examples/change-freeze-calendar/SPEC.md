@@ -241,7 +241,7 @@ the moment two efforts run in parallel, and a locked set cannot be renamed.)
 - **API grounding pulled this session** (cited, not re-transcribed): `now-sdk explain` topics
   `wfa-flow-guide`, `wfa-flow-actions-guide`, `businessrule-api`, `table-api`,
   `catalogitemrecordproducer-api`, `test-api`, `listcollectorvariable-api`, `acl-api` — each pulled
-  to a scratch file and grepped rather than read whole, per the context-efficiency rule.
+  to a scratch file and grepped rather than read whole, to keep session context small.
 - **Read-backs, ATF, screenshots:** none yet — this spec is written before BUILD starts. All of it
   lands in `PACKAGE.md` alongside this file at PACKAGE+VERIFY close.
 - **Gate 1 — the deviation, stated plainly.** This run was a controlled trial, so build authority

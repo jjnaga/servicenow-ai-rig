@@ -1,0 +1,178 @@
+{
+ "oob": {
+  "indicators": [
+   "Order Line Total Line Amount(History Line)",
+   "(ATF) Purchase Line - Total Line Amount",
+   "PSM - Number of closed record types",
+   "Number of Open Purchasing Task",
+   "All time savings",
+   "Number of Total Cost Avoidance Negotiations",
+   "Number of Total Negotiations",
+   "PSM - ProcurementSLA.standard time",
+   "Order Line Revisioned Line Amount",
+   "Number of Open Purchase Requisition",
+   "Total Line Amount for Open Purchase Order Line",
+   "PSM - Procurement Team Performance.Count",
+   "Number of Closed Purchase Requisitions - Monthly",
+   "Number of All Purchase Requisition - Monthly",
+   "PSM - Average cycle time in each state for record types",
+   "Purchase Order - Total Line Amount",
+   "PSM - ProcurementSLA.duration of records",
+   "Purchase Line Total Negotiated Savings",
+   "Purchase Requisition - Avg Cycle Time (Days) - Monthly",
+   "Number of Closed Sourcing Requests - Monthly",
+   "PSM - Average cycle time for record types",
+   "All time spend",
+   "Number of Open Sourcing Request",
+   "Purchase Line Negotiated Savings",
+   "Number of Open Negotiations",
+   "Number of Total (ATF) Purchase Requisition",
+   "Number of Total Contract Terms Negotiations",
+   "Number of Total Negotiation Unsuccessful",
+   "Sourcing Request - Avg Cycle Time (Days) - Monthly ",
+   "Number of All Sourcing Request - Monthly",
+   "Number of Expiring Contracts",
+   "PSM - Breached SLA by record type",
+   "Parent Line Negotiated Savings",
+   "Number of Total Standard Savings Negotiations"
+  ],
+  "widgets": [
+   "Average time Vs SLA Time of breached records",
+   "My Expiring Contracts by Due Date",
+   "Negotiated Savings by Buyer - YTD",
+   "Open Negotiations",
+   "Open Sourcing Requests",
+   "Expiring Contracts",
+   "My Open Sourcing Requests",
+   "Open Sourcing Requests By Due Date",
+   "Average time to complete by state",
+   "My Average Purchase Requisition Cycle Time",
+   "Purchase Requisition Cycle Time - Last Month",
+   "Expiring Contracts by End Date",
+   "My Open Negotiations",
+   "My Expiring Contracts",
+   "Average Sourcing Request Cycle Time",
+   "Open Purchase Requisitions",
+   "Spend by Category - YTD",
+   "Average time to complete record",
+   "Open Negotiations By Due Date",
+   "My Open Purchasing Tasks",
+   "My Open Sourcing Requests by Due Date",
+   "Employee performance breaches in durations",
+   "My Average Sourcing Request Cycle Time",
+   "Breached SLA by record type",
+   "Employee performance by record type",
+   "Sourcing Request Cycle Time - Last Month",
+   "Total spend by supplier - YTD",
+   "After-the-Fact (ATF) Purchase Requisitions",
+   "My Open Purchase Requisitions",
+   "Negotiation Outcomes by Buyer - YTD",
+   "Average Purchase Requisition Cycle Time",
+   "My Open Negotiations by Due Date"
+  ],
+  "modules": [
+   {
+    "roles": "sn_spend_psd.psd_admin,sn_spend_psd.manager,sn_spend_psd.agent",
+    "active": "true",
+    "title": "Dashboards"
+   },
+   {
+    "roles": "sn_shop.procurement_administrator,sn_shop.procurement_specialist,sn_shop.procurement_specialist_manager",
+    "active": "true",
+    "title": "Dashboards"
+   }
+  ]
+ },
+ "configured": [
+  {
+   "title": "NGB - Purchase requisitions by state",
+   "sys_id": "c9cc2e9fc36e4b50aaafb71d050131f3",
+   "table": "sn_shop_purchase_requisition",
+   "filter": "legal_entityIN788c1a9bc3aa4b50aaafb71d0501317b,018c1a9bc3aa4b50aaafb71d050131c1,ed8c1a9bc3aa4b50aaafb71d050131e9,b98c5a9bc3aa4b50aaafb71d05013144,0e8c5a9bc3aa4b50aaafb71d050131ab,a28c5a9bc3aa4b50aaafb71d050131e1,ba8c5a9bc3aa4b50aaafb71d050131fd,5b8c9a9bc3aa4b50aaafb71d05013126,eb8c9a9bc3aa4b50aaafb71d0501318d,409c9a9bc3aa4b50aaafb71d050131c3,909c9a9bc3aa4b50aaafb71d050131d3",
+   "readback_ok": true,
+   "rows": 22,
+   "table_rows": 22,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - PR value by cost centre",
+   "sys_id": "9eccae9fc36e4b50aaafb71d0501310a",
+   "table": "sn_shop_purchase_requisition",
+   "filter": "legal_entityIN788c1a9bc3aa4b50aaafb71d0501317b,018c1a9bc3aa4b50aaafb71d050131c1,ed8c1a9bc3aa4b50aaafb71d050131e9,b98c5a9bc3aa4b50aaafb71d05013144,0e8c5a9bc3aa4b50aaafb71d050131ab,a28c5a9bc3aa4b50aaafb71d050131e1,ba8c5a9bc3aa4b50aaafb71d050131fd,5b8c9a9bc3aa4b50aaafb71d05013126,eb8c9a9bc3aa4b50aaafb71d0501318d,409c9a9bc3aa4b50aaafb71d050131c3,909c9a9bc3aa4b50aaafb71d050131d3",
+   "readback_ok": true,
+   "rows": 22,
+   "table_rows": 22,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - Approval plans by state (ageing)",
+   "sys_id": "8fccae9fc36e4b50aaafb71d05013172",
+   "table": "sn_shop_approval_plan",
+   "filter": "approving_table=sn_shop_purchase_requisition",
+   "readback_ok": true,
+   "rows": 62,
+   "table_rows": 62,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - Invoices pending verification",
+   "sys_id": "bfccee9fc36e4b50aaafb71d0501313d",
+   "table": "sn_shop_invoice",
+   "filter": "legal_entityIN788c1a9bc3aa4b50aaafb71d0501317b,018c1a9bc3aa4b50aaafb71d050131c1,ed8c1a9bc3aa4b50aaafb71d050131e9,b98c5a9bc3aa4b50aaafb71d05013144,0e8c5a9bc3aa4b50aaafb71d050131ab,a28c5a9bc3aa4b50aaafb71d050131e1,ba8c5a9bc3aa4b50aaafb71d050131fd,5b8c9a9bc3aa4b50aaafb71d05013126,eb8c9a9bc3aa4b50aaafb71d0501318d,409c9a9bc3aa4b50aaafb71d050131c3,909c9a9bc3aa4b50aaafb71d050131d3^stateNOT INpaid,canceled,rejected",
+   "readback_ok": true,
+   "rows": 2,
+   "table_rows": 2,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - Procurement exceptions by type",
+   "sys_id": "b8dcee9fc36e4b50aaafb71d050131d7",
+   "table": "sn_spend_sdc_exception",
+   "filter": "active=true",
+   "readback_ok": true,
+   "rows": 2,
+   "table_rows": 2,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - Procurement exceptions by root cause",
+   "sys_id": "a9dc22dfc36e4b50aaafb71d05013170",
+   "table": "sn_spend_sdc_exception",
+   "filter": "",
+   "readback_ok": true,
+   "rows": 2,
+   "table_rows": 2,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - Open procurement cases by group",
+   "sys_id": "2adc62dfc36e4b50aaafb71d0501313b",
+   "table": "sn_spend_psd_procurement_request",
+   "filter": "active=true",
+   "readback_ok": true,
+   "rows": 44,
+   "table_rows": 44,
+   "filter_check": "filters honoured"
+  },
+  {
+   "title": "NGB - Manual ERP handoffs awaiting reference",
+   "sys_id": "9fdc62dfc36e4b50aaafb71d050131bb",
+   "table": "sn_shop_invoice",
+   "filter": "legal_entityIN788c1a9bc3aa4b50aaafb71d0501317b,018c1a9bc3aa4b50aaafb71d050131c1,ed8c1a9bc3aa4b50aaafb71d050131e9,b98c5a9bc3aa4b50aaafb71d05013144,0e8c5a9bc3aa4b50aaafb71d050131ab,a28c5a9bc3aa4b50aaafb71d050131e1,ba8c5a9bc3aa4b50aaafb71d050131fd,5b8c9a9bc3aa4b50aaafb71d05013126,eb8c9a9bc3aa4b50aaafb71d0501318d,409c9a9bc3aa4b50aaafb71d050131c3,909c9a9bc3aa4b50aaafb71d050131d3^erp_posting_dateISEMPTY",
+   "readback_ok": true,
+   "rows": 0,
+   "table_rows": 2,
+   "filter_check": "filters honoured"
+  }
+ ],
+ "req045": {
+  "sn_shop_purchase_requisition": {
+   "ngb": 22,
+   "all": 22
+  },
+  "sn_shop_invoice": {
+   "ngb": 2,
+   "all": 2
+  }
+ }
+}

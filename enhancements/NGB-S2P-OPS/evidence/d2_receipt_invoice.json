@@ -1,0 +1,63 @@
+{
+ "receipts": [
+  {
+   "number": "RCPT0001003",
+   "received_by": "451d714cc3220750aaafb71d05013198",
+   "purchase_order_line": "3877f65fc3ee4b50aaafb71d050131fb",
+   "amount_received": "USD;20000",
+   "received": "2026-08-12",
+   "quantity_received": "",
+   "type": "service",
+   "status": "pending_review"
+  },
+  {
+   "number": "RCPT0001002",
+   "received_by": "02fc3d0cc3220750aaafb71d05013128",
+   "purchase_order_line": "ac3a3e57c3228b50aaafb71d05013141",
+   "amount_received": "",
+   "received": "2026-08-12",
+   "quantity_received": "3",
+   "type": "good",
+   "status": "pending_review"
+  },
+  {
+   "number": "RCPT0001001",
+   "received_by": "02fc3d0cc3220750aaafb71d05013128",
+   "purchase_order_line": "ac3a3e57c3228b50aaafb71d05013141",
+   "amount_received": "",
+   "received": "2026-08-12",
+   "quantity_received": "5",
+   "type": "good",
+   "status": "pending_review"
+  }
+ ],
+ "three_way": {
+  "ordered": 8,
+  "received": 8,
+  "invoiced": 9
+ },
+ "exception": {
+  "number": "FINEX0001003",
+  "assignment_group": "ed153588c3aec350aaafb71d05013165",
+  "purchase_order": "d03a3e57c3228b50aaafb71d05013120",
+  "purchase_request": "cb29f693c3228b50aaafb71d050131b3",
+  "supplier": "5a3d1a1fc3aa4b50aaafb71d05013196",
+  "exception_type": "quantity_variance",
+  "correlation_id": "POS-2026-04501",
+  "receipt": "",
+  "state": "10",
+  "priority": "2",
+  "root_cause": "supplier_billing_error",
+  "assigned_to": "090dbd0cc3220750aaafb71d05013186"
+ },
+ "invoice_final": {
+  "erp_source": "",
+  "number": "INV0001003",
+  "sys_updated_by": "admin",
+  "erp_posting_date": "2026-08-13",
+  "erp_number": "NGB-AP-2026-000204",
+  "state": "Approved",
+  "sys_updated_on": "2026-08-12 04:50:00",
+  "invoice_amount": "$0.00"
+ }
+}

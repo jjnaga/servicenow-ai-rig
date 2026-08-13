@@ -1,0 +1,135 @@
+{
+ "erp_source": "c33b96d7c3aa4b50aaafb71d050131f3",
+ "ledger": "60cb5a1bc3aa4b50aaafb71d050131a9",
+ "gl": {},
+ "legal_entities": {
+  "07637900c36ec350aaafb71d05013154": "788c1a9bc3aa4b50aaafb71d0501317b",
+  "67fa75c4c3220750aaafb71d0501313b": "018c1a9bc3aa4b50aaafb71d050131c1",
+  "8c0bb5c4c3220750aaafb71d05013143": "ed8c1a9bc3aa4b50aaafb71d050131e9",
+  "66fa35c4c3220750aaafb71d05013185": "b98c5a9bc3aa4b50aaafb71d05013144",
+  "900bb5c4c3220750aaafb71d0501314e": "0e8c5a9bc3aa4b50aaafb71d050131ab",
+  "43fa35c4c3220750aaafb71d050131e5": "a28c5a9bc3aa4b50aaafb71d050131e1",
+  "d3fa75c4c3220750aaafb71d05013108": "ba8c5a9bc3aa4b50aaafb71d050131fd",
+  "200bb5c4c3220750aaafb71d050131a3": "5b8c9a9bc3aa4b50aaafb71d05013126",
+  "fbfa75c4c3220750aaafb71d050131c9": "eb8c9a9bc3aa4b50aaafb71d0501318d",
+  "b3fa75c4c3220750aaafb71d050131ba": "409c9a9bc3aa4b50aaafb71d050131c3",
+  "3afa35c4c3220750aaafb71d050131b5": "909c9a9bc3aa4b50aaafb71d050131d3"
+ },
+ "purchasing_entities": {
+  "07637900c36ec350aaafb71d05013154": "059cda9bc3aa4b50aaafb71d0501312c",
+  "67fa75c4c3220750aaafb71d0501313b": "e19cda9bc3aa4b50aaafb71d050131c5",
+  "8c0bb5c4c3220750aaafb71d05013143": "029cda9bc3aa4b50aaafb71d050131e1",
+  "66fa35c4c3220750aaafb71d05013185": "ea9c1e9bc3aa4b50aaafb71d05013115",
+  "900bb5c4c3220750aaafb71d0501314e": "be9c1e9bc3aa4b50aaafb71d050131ad",
+  "43fa35c4c3220750aaafb71d050131e5": "039c1e9bc3aa4b50aaafb71d050131ef",
+  "d3fa75c4c3220750aaafb71d05013108": "eb9c5e9bc3aa4b50aaafb71d05013123",
+  "200bb5c4c3220750aaafb71d050131a3": "7f9c5e9bc3aa4b50aaafb71d05013164",
+  "fbfa75c4c3220750aaafb71d050131c9": "5cac5e9bc3aa4b50aaafb71d050131be",
+  "b3fa75c4c3220750aaafb71d050131ba": "60ac5e9bc3aa4b50aaafb71d050131e7",
+  "3afa35c4c3220750aaafb71d050131b5": "01ac5a1bc3aa4b50aaafb71d0501315c"
+ },
+ "buyer_group": "e9ac9e9bc3aa4b50aaafb71d050131ae",
+ "cost_centres": {
+  "3000": {
+   "name": "Housing & Construction",
+   "manager": "8dbc7dc8c3220750aaafb71d050131f3",
+   "source": "dept(Construction Project Delivery)"
+  },
+  "8100": {
+   "name": "Facilities",
+   "manager": "70fcf90cc3220750aaafb71d05013110",
+   "source": "dept(Facilities & Workplace Services)"
+  },
+  "1100": {
+   "name": "Infrastructure Operations",
+   "manager": "1fdcb50cc3220750aaafb71d0501314e",
+   "source": "override(skupihea)"
+  },
+  "2000": {
+   "name": "Water",
+   "manager": "2f0d314cc3220750aaafb71d0501314e",
+   "source": "dept(Water Operations)"
+  },
+  "5000": {
+   "name": "Transportation",
+   "manager": "fb1df14cc3220750aaafb71d05013178",
+   "source": "dept(Transit Operations)"
+  },
+  "1200": {
+   "name": "Application Development",
+   "manager": "58dcf10cc3220750aaafb71d050131e3",
+   "source": "dept(Application Development)"
+  },
+  "4000": {
+   "name": "Hospitality & Entertainment",
+   "manager": "f6bcfdc8c3220750aaafb71d050131c0",
+   "source": "dept(Hospitality Operations)"
+  },
+  "1000": {
+   "name": "Technology",
+   "manager": "44cc310cc3220750aaafb71d05013171",
+   "source": "override(knakamura)"
+  },
+  "6000": {
+   "name": "Financial Services",
+   "manager": "e7bc310cc3220750aaafb71d05013114",
+   "source": "dept(Financial Services Operations)"
+  },
+  "7000": {
+   "name": "Apparel & Cosmetics",
+   "manager": "57bc310cc3220750aaafb71d05013103",
+   "source": "dept(Apparel & Cosmetics Operations)"
+  },
+  "8000": {
+   "name": "Corporate & Shared Services",
+   "manager": "b6acf9c8c3220750aaafb71d050131e7",
+   "source": "override(jnagahama)"
+  }
+ },
+ "usd": "USD",
+ "ngb_company": "07637900c36ec350aaafb71d05013154",
+ "refused": [
+  {
+   "table": "sn_fin_gl_account",
+   "key": "gl_account=60100",
+   "why": "ledger account (REQ-013 'ledger/accounting' dataset)",
+   "status": 403,
+   "detail": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"ACL Exception Insert Failed due to security constraints\"},\"status\":\"failure\"}"
+  },
+  {
+   "table": "sn_fin_gl_account",
+   "key": "gl_account=60200",
+   "why": "ledger account (REQ-013 'ledger/accounting' dataset)",
+   "status": 403,
+   "detail": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"ACL Exception Insert Failed due to security constraints\"},\"status\":\"failure\"}"
+  },
+  {
+   "table": "sn_fin_gl_account",
+   "key": "gl_account=60300",
+   "why": "ledger account (REQ-013 'ledger/accounting' dataset)",
+   "status": 403,
+   "detail": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"ACL Exception Insert Failed due to security constraints\"},\"status\":\"failure\"}"
+  },
+  {
+   "table": "sn_fin_gl_account",
+   "key": "gl_account=60400",
+   "why": "ledger account (REQ-013 'ledger/accounting' dataset)",
+   "status": 403,
+   "detail": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"ACL Exception Insert Failed due to security constraints\"},\"status\":\"failure\"}"
+  },
+  {
+   "table": "sn_fin_gl_account",
+   "key": "gl_account=60500",
+   "why": "ledger account (REQ-013 'ledger/accounting' dataset)",
+   "status": 403,
+   "detail": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"ACL Exception Insert Failed due to security constraints\"},\"status\":\"failure\"}"
+  },
+  {
+   "table": "sn_fin_gl_account",
+   "key": "gl_account=15000",
+   "why": "ledger account (REQ-013 'ledger/accounting' dataset)",
+   "status": 403,
+   "detail": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"ACL Exception Insert Failed due to security constraints\"},\"status\":\"failure\"}"
+  }
+ ]
+}

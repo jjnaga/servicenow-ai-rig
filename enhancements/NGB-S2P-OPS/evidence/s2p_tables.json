@@ -1,0 +1,932 @@
+[
+ {
+  "name": "sn_fin_gl_rule",
+  "super_class": "",
+  "label": "GL Rule",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_supplier_payment",
+  "super_class": "",
+  "label": "Supplier Payment Information",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_balance",
+  "super_class": "78a379dbc3e20b50aaafb71d05013171",
+  "label": "Ledger Balance",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_supplier",
+  "super_class": "58a3b5dbc3e20b50aaafb71d05013167",
+  "label": "Supplier",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_properties",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Properties",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_due_rule",
+  "super_class": "01a3b9dbc3e20b50aaafb71d0501312e",
+  "label": "Due Date Rule",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_erp_source",
+  "super_class": "",
+  "label": "ERP Source",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_support",
+  "super_class": "",
+  "label": "GL Support",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_s2p_custom_config_type",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "S2P Custom Configuration Type",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_uom",
+  "super_class": "",
+  "label": "Unit of measure",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_buyer_group_member",
+  "super_class": "",
+  "label": "Buyer Group Member",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_erp_source_mapping",
+  "super_class": "",
+  "label": "ERP source mapping",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_currency_setting",
+  "super_class": "01a3b9dbc3e20b50aaafb71d0501312e",
+  "label": "Currency conversion setting",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_organization",
+  "super_class": "",
+  "label": "Organization",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_base_tax_line",
+  "super_class": "",
+  "label": "Base Tax Line",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_account",
+  "super_class": "",
+  "label": "Ledger Account",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_access",
+  "super_class": "",
+  "label": "Account Access",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_office_location",
+  "super_class": "",
+  "label": "Office Location",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_m2m_fixed_asset",
+  "super_class": "",
+  "label": "Fixed Asset to Asset",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_balance",
+  "super_class": "",
+  "label": "Balance",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_period",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Period",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_group_mapping",
+  "super_class": "",
+  "label": "Account Group Mapping",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_signer",
+  "super_class": "",
+  "label": "Signer",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_subledger_balance",
+  "super_class": "78a379dbc3e20b50aaafb71d05013171",
+  "label": "Subledger Balance",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_import_error",
+  "super_class": "",
+  "label": "Import error",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_buyer_group",
+  "super_class": "",
+  "label": "Buyer Group",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_accounting_period",
+  "super_class": "",
+  "label": "Accounting Periods",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_base_invoice",
+  "super_class": "",
+  "label": "Base Invoice",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_group",
+  "super_class": "",
+  "label": "Ledger Account Group",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_supplier_detail",
+  "super_class": "",
+  "label": "Supplier Legal Entity Mapping",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_excel_data_import",
+  "super_class": "",
+  "label": "Excel Data Import",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_s2p_custom_config",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "S2P Custom Configuration",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_base_invoice_line",
+  "super_class": "",
+  "label": "Base Invoice Line",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_industry",
+  "super_class": "",
+  "label": "Industry",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_threshold_rule",
+  "super_class": "01a3b9dbc3e20b50aaafb71d0501312e",
+  "label": "Threshold Rule",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_ledger",
+  "super_class": "",
+  "label": "Ledger",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_gl_access_rule",
+  "super_class": "01a3b9dbc3e20b50aaafb71d0501312e",
+  "label": "Account Access Rule",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_org_tax_detail",
+  "super_class": "",
+  "label": "Organization Tax Details",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_profit_center",
+  "super_class": "",
+  "label": "Profit Center",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_tax_code",
+  "super_class": "",
+  "label": "Tax Code",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_fixed_asset",
+  "super_class": "",
+  "label": "Fixed Asset",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_legal_entity",
+  "super_class": "58a3b5dbc3e20b50aaafb71d05013167",
+  "label": "Legal Entity",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_tax_type",
+  "super_class": "",
+  "label": "Tax Type",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_purchasing_entity",
+  "super_class": "",
+  "label": "Purchasing Entity",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_fin_fx_rate",
+  "super_class": "cee1b2f78c9103100a22deb6dd2b4eb2",
+  "label": "Finance Exchange Rates",
+  "scope": "sn_fin"
+ },
+ {
+  "name": "sn_shop_product_group",
+  "super_class": "",
+  "label": "Product group",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_rule",
+  "super_class": "",
+  "label": "Approval Rule",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_order_line_history",
+  "super_class": "cdd3f59fc3e20b50aaafb71d050131d8",
+  "label": "Purchase Order Line History",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_attribute_type",
+  "super_class": "",
+  "label": "Attribute Type",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_user_supplier_purchase",
+  "super_class": "",
+  "label": "Supplier Use by Shopper",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_erp_address_map",
+  "super_class": "",
+  "label": "ERP Address Mapping",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_invoice_task",
+  "super_class": "7ac3fd5fc3e20b50aaafb71d05013140",
+  "label": "Service Acknowledgment",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_delivery_address_task",
+  "super_class": "51d3399fc3e20b50aaafb71d050131ea",
+  "label": "Delivery Address Task",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_requisition_additional_info",
+  "super_class": "",
+  "label": "Requisition Additional Info",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_shopping_control",
+  "super_class": "",
+  "label": "Shopping Control",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_supplier_product_view",
+  "super_class": "",
+  "label": "Supplier Product View",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_non_catalog_intake",
+  "super_class": "06803e7b8c1103100a22deb6dd2b4e9c",
+  "label": "Non Catalog Intake",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_supplier_product_artifact",
+  "super_class": "",
+  "label": "Product Visuals",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_plan_detail",
+  "super_class": "",
+  "label": "Approval Plan Detail",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_sourcing_task",
+  "super_class": "51d3399fc3e20b50aaafb71d050131ea",
+  "label": "Sourcing Task",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_order_contract",
+  "super_class": "",
+  "label": "Order to Contract Relationships",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_purchase_requisition",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Purchase Requisition",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_rev_request_line",
+  "super_class": "d1d7395fc3e60b50aaafb71d05013142",
+  "label": "Revision Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_sourcing_contract",
+  "super_class": "",
+  "label": "Sourcing to Contract Relationships",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_paycheck_periods",
+  "super_class": "",
+  "label": "Paycheck Periods",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_milestone",
+  "super_class": "7ac3fd5fc3e20b50aaafb71d05013140",
+  "label": "Milestone",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_attribute",
+  "super_class": "",
+  "label": "Attribute",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_credit_allocation_rules",
+  "super_class": "",
+  "label": "Credit Allocation Rules",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_price_break",
+  "super_class": "",
+  "label": "Price Break",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_payment_method",
+  "super_class": "",
+  "label": "Payment Methods",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_negotiation_contract",
+  "super_class": "",
+  "label": "Negotiation to Contract Relationships",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_shopnow_content",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "ShoppingHub Configuration",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_task",
+  "super_class": "67b3b15fc3e20b50aaafb71d05013136",
+  "label": "Purchasing Task",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_cart_header",
+  "super_class": "",
+  "label": "Cart Header",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_plan",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Approval Plan",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_reminder_task",
+  "super_class": "51d3399fc3e20b50aaafb71d050131ea",
+  "label": "Approval Reminder Task",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_percent_complete_config",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Percent Complete Configuration",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_cost_allocation",
+  "super_class": "",
+  "label": "Purchase Cost Allocation",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_purchase_order",
+  "super_class": "b3c3b19fc3e20b50aaafb71d050131ba",
+  "label": "Purchase Order",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_shipping_method",
+  "super_class": "",
+  "label": "Shipping methods",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_job_code",
+  "super_class": "",
+  "label": "Job Code",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_invoice_cost_allocation",
+  "super_class": "",
+  "label": "Invoice cost allocation",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_capitalization_policy",
+  "super_class": "",
+  "label": "Capitalization Policy",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_psm_state_mapper",
+  "super_class": "",
+  "label": "PSM State Mapper",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_attribute_set",
+  "super_class": "",
+  "label": "Attribute Set",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_pre_payment",
+  "super_class": "",
+  "label": "Pre-Payment",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_receipt_task",
+  "super_class": "7ac3fd5fc3e20b50aaafb71d05013140",
+  "label": "Receipt Task",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_purchase",
+  "super_class": "",
+  "label": "Purchase",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_delivery_location",
+  "super_class": "",
+  "label": "Delivery Location",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_user_control",
+  "super_class": "",
+  "label": "User Controls",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_acknowledgement_task",
+  "super_class": "67b3b15fc3e20b50aaafb71d05013136",
+  "label": "Acknowledgement Task",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_shipment_details",
+  "super_class": "",
+  "label": "Shipment Details",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_group_plan",
+  "super_class": "",
+  "label": "Approval Group Plan",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_cart_delivery",
+  "super_class": "",
+  "label": "Cart Delivery",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_erp_asset_category_map",
+  "super_class": "",
+  "label": "ERP Asset Category Mapping",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_erp_error_task",
+  "super_class": "51d3399fc3e20b50aaafb71d050131ea",
+  "label": "Integration Error",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_rule_composition",
+  "super_class": "",
+  "label": "Approval Rule Composition",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_fx_currency_instance",
+  "super_class": "",
+  "label": "PSM FX Currency",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_requisition_contract",
+  "super_class": "",
+  "label": "Requisition to Contract Relationships",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_erp_material_group_map",
+  "super_class": "",
+  "label": "ERP Material Group Mapping",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_employee_credit",
+  "super_class": "",
+  "label": "Employee Credit",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_dept_supplier_purchase",
+  "super_class": "",
+  "label": "Supplier Use by Department",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_negotiation_event",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Sourcing Event",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_user_category_purchase",
+  "super_class": "",
+  "label": "Purchases by Category",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_payment_term",
+  "super_class": "",
+  "label": "Payment Terms",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_supplier_product",
+  "super_class": "",
+  "label": "Supplier Product",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_line",
+  "super_class": "",
+  "label": "Shop Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_user_product_purchase",
+  "super_class": "",
+  "label": "Product Purchases by Job code and Department",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_order_history",
+  "super_class": "b3c3b19fc3e20b50aaafb71d050131ba",
+  "label": "Purchase Order History",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_cart_line",
+  "super_class": "",
+  "label": "Cart Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_approval_group",
+  "super_class": "",
+  "label": "Approval Group",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_order",
+  "super_class": "",
+  "label": "Order Template",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_purchase_line",
+  "super_class": "d1d7395fc3e60b50aaafb71d05013142",
+  "label": "Purchase Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_covered_user",
+  "super_class": "",
+  "label": "Purchasing Permission",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_purchasing_users_covered",
+  "super_class": "",
+  "label": "Requisition Permission",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_shipment_product",
+  "super_class": "",
+  "label": "Shipment Product",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_ledger_assignment_rule",
+  "super_class": "",
+  "label": "Ledger Assignment Rules",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_order_line",
+  "super_class": "acd3759fc3e20b50aaafb71d050131e8",
+  "label": "Order Line Template",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_distribution_line",
+  "super_class": "",
+  "label": "Distribution Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_request_line",
+  "super_class": "acd3759fc3e20b50aaafb71d050131e8",
+  "label": "Request Line Template",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_purchase_order_line",
+  "super_class": "cdd3f59fc3e20b50aaafb71d050131d8",
+  "label": "Purchase Order Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_negotiation",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Negotiation",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_invoice_line",
+  "super_class": "c4b3351fc3e20b50aaafb71d0501319a",
+  "label": "Invoice Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_shopnow_api_cache",
+  "super_class": "",
+  "label": "ShoppingHub API Cache",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_distribution_set",
+  "super_class": "",
+  "label": "Distribution Set",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_order_users_covered",
+  "super_class": "",
+  "label": "Order Permission",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_invoice",
+  "super_class": "a4b3b51fc3e20b50aaafb71d0501312e",
+  "label": "Invoice",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_handling_fee",
+  "super_class": "",
+  "label": "Handling Fee",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_invoice_tax_line",
+  "super_class": "5fa3b11fc3e20b50aaafb71d050131b5",
+  "label": "Invoice Tax Line",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_invoice_payment_detail",
+  "super_class": "",
+  "label": "Invoice Payment Detail",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_receipt",
+  "super_class": "",
+  "label": "Receipt",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_revision_request",
+  "super_class": "51d3399fc3e20b50aaafb71d050131ea",
+  "label": "Revision Request",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_m2m_product_contract",
+  "super_class": "",
+  "label": "Pricing",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_sourcing_activity",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Sourcing Request",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_shop_usr_preferred_supplier",
+  "super_class": "",
+  "label": "Shopper's Top Suppliers",
+  "scope": "sn_shop"
+ },
+ {
+  "name": "sn_slm_m2m_location",
+  "super_class": "",
+  "label": "Supplier Location",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_email_domain",
+  "super_class": "",
+  "label": "Supplier Email Domain",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_supplier_m2m_internal_stakeholders",
+  "super_class": "",
+  "label": "Internal Stakeholders",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_case",
+  "super_class": "57b3715fc3e20b50aaafb71d05013177",
+  "label": "Supplier Case",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_task",
+  "super_class": "67b3b15fc3e20b50aaafb71d05013136",
+  "label": "Supplier Task",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_product_code",
+  "super_class": "",
+  "label": "Product Code",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_contact_m2m_supplier",
+  "super_class": "",
+  "label": "Supplier contact",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_slm_code_m2m_supplier",
+  "super_class": "",
+  "label": "Supplier Product Code",
+  "scope": "sn_slm"
+ },
+ {
+  "name": "sn_spend_psd_procurement_task",
+  "super_class": "67b3b15fc3e20b50aaafb71d05013136",
+  "label": "Procurement Task",
+  "scope": "sn_spend_psd"
+ },
+ {
+  "name": "sn_spend_psd_procurement_request",
+  "super_class": "57b3715fc3e20b50aaafb71d05013177",
+  "label": "Procurement Case",
+  "scope": "sn_spend_psd"
+ },
+ {
+  "name": "sn_spend_psd_purchase_modification",
+  "super_class": "",
+  "label": "Purchase Modification",
+  "scope": "sn_spend_psd"
+ },
+ {
+  "name": "sn_spend_psd_procurement_request_line",
+  "super_class": "07b3315fc3e20b50aaafb71d0501313d",
+  "label": "Procurement Case Line",
+  "scope": "sn_spend_psd"
+ },
+ {
+  "name": "sn_spend_sdc_service_request_line",
+  "super_class": "",
+  "label": "Finance Case Line",
+  "scope": "sn_spend_sdc"
+ },
+ {
+  "name": "sn_spend_sdc_playbook_status",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Playbook status",
+  "scope": "sn_spend_sdc"
+ },
+ {
+  "name": "sn_spend_sdc_service_request",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Finance Case",
+  "scope": "sn_spend_sdc"
+ },
+ {
+  "name": "sn_spend_sdc_service_task",
+  "super_class": "1521b6f78c5103100a22deb6dd2b4e61",
+  "label": "Finance Task",
+  "scope": "sn_spend_sdc"
+ },
+ {
+  "name": "sn_spend_sdc_exception",
+  "super_class": "57b3715fc3e20b50aaafb71d05013177",
+  "label": "Procurement Exception",
+  "scope": "sn_spend_sdc"
+ },
+ {
+  "name": "sn_pr_work_item",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Purchase work item",
+  "scope": "sn_pr"
+ },
+ {
+  "name": "sn_pr_m2m_step_work_item_map",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Step to Work item Relationships",
+  "scope": "sn_pr"
+ },
+ {
+  "name": "sn_pr_step_configuration",
+  "super_class": "6eef22338c1103100a22deb6dd2b4ea2",
+  "label": "Step configuration",
+  "scope": "sn_pr"
+ }
+]

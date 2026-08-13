@@ -1,0 +1,16 @@
+{
+ "rules": {
+  "NGB PR - Cost centre owner": "e3cdd29fc3aa4b50aaafb71d05013121",
+  "NGB PR - Procurement USD 25k-100k": "3bcdd29fc3aa4b50aaafb71d05013144",
+  "NGB PR - Procurement USD 100k+": "c0ddd29fc3aa4b50aaafb71d05013174",
+  "NGB PR - Finance USD 100k+": "1cddd29fc3aa4b50aaafb71d050131d5",
+  "NGB PR - Procurement risk trigger": "e8ddd29fc3aa4b50aaafb71d050131ec",
+  "NGB PR - Finance risk trigger": "f0ddd29fc3aa4b50aaafb71d050131f7"
+ },
+ "groups": {
+  "NGB PR Tier 2 - CC then Procurement": "f9dd169fc3aa4b50aaafb71d050131b4",
+  "NGB PR Tier 3 - CC Proc Finance": "eadd569fc3aa4b50aaafb71d0501319e",
+  "NGB PR Risk - CC Proc Finance": "e7dd969fc3aa4b50aaafb71d05013145"
+ },
+ "amount_field": "total_line_amount.reference_amount"
+}

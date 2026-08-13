@@ -1,0 +1,102 @@
+{
+ "suppliers": {
+  "Pacific Office Solutions LLC": "5a3d1a1fc3aa4b50aaafb71d05013196",
+  "Kaimuki Facilities Services Inc": "ba3d1a1fc3aa4b50aaafb71d050131e6",
+  "Island Fleet Parts Co": "5f3d5a1fc3aa4b50aaafb71d05013164",
+  "AquaSense Instruments Ltd": "f73d9a1fc3aa4b50aaafb71d05013108",
+  "Shinjuku Systems KK": "544d9a1fc3aa4b50aaafb71d05013148",
+  "Mauka Data Systems LLC": "304d9a1fc3aa4b50aaafb71d0501317c",
+  "Windward Print & Signage LLC": "a14d9a1fc3aa4b50aaafb71d050131e2",
+  "Hookele Advisory Partners LLC": "064dda1fc3aa4b50aaafb71d05013122"
+ },
+ "categories": {
+  "NGB Office & IT Supplies": "6e5d9e1fc3aa4b50aaafb71d050131b1",
+  "NGB Capital Equipment": "475dde1fc3aa4b50aaafb71d0501317a",
+  "NGB Transit Fleet Parts": "1b5dde1fc3aa4b50aaafb71d050131c6",
+  "NGB Water Telemetry Equipment": "ab5dde1fc3aa4b50aaafb71d050131d4",
+  "NGB Professional Services": "7f5d125fc3aa4b50aaafb71d05013139",
+  "NGB Facilities Services": "086d125fc3aa4b50aaafb71d0501316d"
+ },
+ "products": {
+  "POS-CH-400": {
+   "sys_id": "496d525fc3aa4b50aaafb71d050131ce",
+   "model": "f46d125fc3aa4b50aaafb71d050131f5",
+   "price": 500,
+   "supplier": "5a3d1a1fc3aa4b50aaafb71d05013196",
+   "category": "6e5d9e1fc3aa4b50aaafb71d050131b1",
+   "type": "good"
+  },
+  "POS-DK-1600": {
+   "sys_id": "fd6d925fc3aa4b50aaafb71d0501312d",
+   "model": "a96d925fc3aa4b50aaafb71d0501310a",
+   "price": 1250,
+   "supplier": "5a3d1a1fc3aa4b50aaafb71d05013196",
+   "category": "6e5d9e1fc3aa4b50aaafb71d050131b1",
+   "type": "good"
+  },
+  "MDS-R740": {
+   "sys_id": "9a6d925fc3aa4b50aaafb71d050131b8",
+   "model": "c26d925fc3aa4b50aaafb71d050131ae",
+   "price": 12000,
+   "supplier": "304d9a1fc3aa4b50aaafb71d0501317c",
+   "category": "475dde1fc3aa4b50aaafb71d0501317a",
+   "type": "good"
+  },
+  "MDS-SW9300": {
+   "sys_id": "666dd25fc3aa4b50aaafb71d05013143",
+   "model": "5e6d925fc3aa4b50aaafb71d050131e1",
+   "price": 30000,
+   "supplier": "304d9a1fc3aa4b50aaafb71d0501317c",
+   "category": "475dde1fc3aa4b50aaafb71d0501317a",
+   "type": "good"
+  },
+  "IFP-BX9": {
+   "sys_id": "db6dd25fc3aa4b50aaafb71d050131a8",
+   "model": "0b6dd25fc3aa4b50aaafb71d0501316c",
+   "price": 2200,
+   "supplier": "5f3d5a1fc3aa4b50aaafb71d05013164",
+   "category": "1b5dde1fc3aa4b50aaafb71d050131c6",
+   "type": "good"
+  },
+  "ASI-T7": {
+   "sys_id": "ff6d165fc3aa4b50aaafb71d05013126",
+   "model": "e36dd25fc3aa4b50aaafb71d050131f7",
+   "price": 3400,
+   "supplier": "f73d9a1fc3aa4b50aaafb71d05013108",
+   "category": "ab5dde1fc3aa4b50aaafb71d050131d4",
+   "type": "good"
+  },
+  "KFS-HVAC-Q": {
+   "sys_id": "107d165fc3aa4b50aaafb71d05013174",
+   "model": "4c7d165fc3aa4b50aaafb71d05013137",
+   "price": 7500,
+   "supplier": "ba3d1a1fc3aa4b50aaafb71d050131e6",
+   "category": "086d125fc3aa4b50aaafb71d0501316d",
+   "type": "service"
+  },
+  "HAP-ADV": {
+   "sys_id": "347d165fc3aa4b50aaafb71d050131f2",
+   "model": "287d165fc3aa4b50aaafb71d050131c2",
+   "price": 20000,
+   "supplier": "064dda1fc3aa4b50aaafb71d05013122",
+   "category": "7f5d125fc3aa4b50aaafb71d05013139",
+   "type": "service"
+  }
+ },
+ "payment_suppliers": [
+  "Pacific Office Solutions LLC",
+  "Mauka Data Systems LLC",
+  "Kaimuki Facilities Services Inc"
+ ],
+ "usa": "dd38b7111b121100763d91eebc0713f5",
+ "unit": "51a74add0f233300fee7579ac4767e59",
+ "terms": {
+  "DOR": "008f8c1a538100104c16ddeeff7b1204",
+  "Net 7": "0b1c84d6538100104c16ddeeff7b12be",
+  "Net 30": "0f3f041a538100104c16ddeeff7b124f",
+  "Net 60": "a66f8c1a538100104c16ddeeff7b1201",
+  "Net 45": "a95f041a538100104c16ddeeff7b129c",
+  "Net 10": "bfde041a538100104c16ddeeff7b124b",
+  "Net 15": "f82f401a538100104c16ddeeff7b1289"
+ }
+}

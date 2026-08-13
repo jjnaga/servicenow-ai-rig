@@ -1,0 +1,122 @@
+{
+ "tkaaihue": {
+  "total_roles": 78,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.procurement_user",
+   "sn_shop.procurement_specialist",
+   "sn_shop.procurement_specialist_manager",
+   "sn_shop.purchasing_task_owner",
+   "sn_shop.shopper",
+   "sn_slm.fulfiller",
+   "sn_spend_psd.agent",
+   "sn_spend_psd.manager",
+   "sn_spend_psd.procurement_task_owner",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.agent",
+   "sn_spend_sdc.manager",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "bokazaki": {
+  "total_roles": 76,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.procurement_user",
+   "sn_shop.procurement_specialist",
+   "sn_shop.purchasing_task_owner",
+   "sn_shop.shopper",
+   "sn_slm.fulfiller",
+   "sn_spend_psd.agent",
+   "sn_spend_psd.procurement_task_owner",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.agent",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "mhironaka": {
+  "total_roles": 148,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.organization_admin",
+   "sn_fin.procurement_primary_data_admin",
+   "sn_fin.procurement_primary_data_admin",
+   "sn_fin.procurement_user",
+   "sn_shop.procurement_administrator",
+   "sn_shop.procurement_specialist",
+   "sn_shop.purchasing_task_owner",
+   "sn_shop.shopper",
+   "sn_slm.fulfiller",
+   "sn_spend_psd.agent",
+   "sn_spend_psd.procurement_task_owner",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.agent",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "bmiyashiro": {
+  "total_roles": 12,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.procurement_user",
+   "sn_fin.supplier_payment_info_read",
+   "sn_shop.accounts_payable_viewer",
+   "sn_shop.acknowledgement_task_owner",
+   "sn_shop.invoice_owner",
+   "sn_shop.shopper",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "ekim": {
+  "total_roles": 13,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.procurement_user",
+   "sn_shop.accounts_payable_viewer",
+   "sn_shop.acknowledgement_task_owner",
+   "sn_shop.invoice_owner",
+   "sn_shop.procurement_common_reader",
+   "sn_shop.procurement_common_user",
+   "sn_shop.shopper",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "gancheta": {
+  "total_roles": 13,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.procurement_user",
+   "sn_fin.supplier_payment_info_read",
+   "sn_fin.supplier_payment_info_write",
+   "sn_shop.accounts_payable_viewer",
+   "sn_shop.acknowledgement_task_owner",
+   "sn_shop.invoice_owner",
+   "sn_shop.shopper",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "kpark": {
+  "total_roles": 58,
+  "s2p_roles": [
+   "sn_fin.finance_user",
+   "sn_fin.procurement_user",
+   "sn_shop.accounts_payable_viewer",
+   "sn_shop.acknowledgement_task_owner",
+   "sn_shop.invoice_owner",
+   "sn_shop.shopper",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.requestor"
+  ]
+ },
+ "klum": {
+  "total_roles": 6,
+  "s2p_roles": [
+   "sn_shop.shopper",
+   "sn_spend_psd.requestor",
+   "sn_spend_sdc.requestor"
+  ]
+ }
+}

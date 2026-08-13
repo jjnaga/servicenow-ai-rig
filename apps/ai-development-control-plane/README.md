@@ -14,12 +14,11 @@ was built on.
 
 ## Read order
 
-1. [`evidence/handoff.md`](evidence/handoff.md) — what is proven, what is not, what a reviewer does next.
-2. [`HEAD_STATE.md`](HEAD_STATE.md) — 30-second installed-state pickup.
-3. [`AGENTS.md`](AGENTS.md) — authority boundary and operating law.
-4. [`SPEC.md`](SPEC.md) — original WHY/WHAT/HOW plus dated execution status.
-5. [`BUILD_JOURNAL.md`](BUILD_JOURNAL.md) and [`evidence/`](evidence/) — dated entries and receipts.
-6. [`codex/APP.md`](codex/APP.md) — installed truth and paid-for scars.
+1. [`AGENTS.md`](AGENTS.md) — authority boundary and operating law.
+2. [`SPEC.md`](SPEC.md) — original WHY/WHAT/HOW plus dated execution status.
+3. [`codex/APP.md`](codex/APP.md) — installed truth and paid-for scars.
+4. `evidence/handoff.md`, `HEAD_STATE.md`, `BUILD_JOURNAL.md` — the run records; they live with
+   the instance owner's working copy and are not in this repository.
 7. Parent `CLAUDE.md`, `codex/servicenow.md`, and `enhancements/loop.md`.
 
 ## Current result
@@ -37,7 +36,7 @@ was built on.
   one of five notification templates has a generated instance.
 
 No update set was published. No promotion, Gate 2 decision, enhancement closure, commit, or push
-occurred. Do not recover the aborted scaffold from Trash and do not run broad `/sn-map`.
+occurred. Do not resurrect the aborted scaffold and do not run broad `/sn-map`.
 
 ## Known gaps
 

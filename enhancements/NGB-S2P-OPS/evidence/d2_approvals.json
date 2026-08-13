@@ -1,0 +1,81 @@
+{
+ "authority": "decided by Tiare Kaaihue, Bruno Miyashiro and the named cost-centre owners at the 2026-08-13 NGB standup, recorded by agent on their behalf",
+ "after": {
+  "J1": {
+   "number": "PR0001022",
+   "state": "Awaiting Task Completion",
+   "approval": "Not Yet Requested",
+   "open_tasks": 0,
+   "purchase_orders": 0
+  },
+  "J2": {
+   "number": "PR0001023",
+   "state": "Awaiting Task Completion",
+   "approval": "Not Yet Requested",
+   "open_tasks": 0,
+   "purchase_orders": 0
+  },
+  "J3": {
+   "number": "PR0001024",
+   "state": "Awaiting Task Completion",
+   "approval": "Not Yet Requested",
+   "open_tasks": 0,
+   "purchase_orders": 0
+  },
+  "J4": {
+   "number": "PR0001025",
+   "state": "Awaiting Task Completion",
+   "approval": "Not Yet Requested",
+   "open_tasks": 0,
+   "purchase_orders": 0
+  }
+ },
+ "impersonation_events": [],
+ "tasks_actioned": 28,
+ "log": [
+  "impersonation events on the instance before this run: 4",
+  "\nclearing the revision hold left by the REQ-030 purchase modifications:",
+  "  REVISION PR0001025 before=90/1 after=20/0",
+  "  REVISION PR0001024 before=20/1 after=20/1",
+  "  REVISION PR0001023 before=90/1 after=20/0",
+  "  REVISION PR0001022 before=90/1 after=20/0",
+  "\napproval round 1:",
+  "  APPROVE plan=APLN0001078 requisition=PR0001022 approver=jnagahama result=approved backTo=admin",
+  "  APPROVE plan=APLN0001074 requisition=PR0001023 approver=aquintal result=approved backTo=admin",
+  "  APPROVE plan=APLN0001062 requisition=PR0001024 approver=iarakaki result=approved backTo=admin",
+  "  APPROVE plan=APLN0001073 requisition=PR0001025 approver=knakamura result=approved backTo=admin",
+  "  round 1: 4 approval task(s) actioned (runner ok=True)",
+  "\napproval round 2:",
+  "  APPROVE plan=APLN0001076 requisition=PR0001023 approver=tkaaihue result=approved backTo=admin",
+  "  APPROVE plan=APLN0001076 requisition=PR0001023 approver=mhironaka result=approved backTo=admin",
+  "  APPROVE plan=APLN0001076 requisition=PR0001023 approver=jvaldez result=approved backTo=admin",
+  "  APPROVE plan=APLN0001063 requisition=PR0001024 approver=tkaaihue result=approved backTo=admin",
+  "  APPROVE plan=APLN0001076 requisition=PR0001023 approver=bokazaki result=approved backTo=admin",
+  "  APPROVE plan=APLN0001076 requisition=PR0001023 approver=rmanliguis result=approved backTo=admin",
+  "  APPROVE plan=APLN0001063 requisition=PR0001024 approver=bokazaki result=approved backTo=admin",
+  "  APPROVE plan=APLN0001063 requisition=PR0001024 approver=rmanliguis result=approved backTo=admin",
+  "  APPROVE plan=APLN0001063 requisition=PR0001024 approver=mhironaka result=approved backTo=admin",
+  "  APPROVE plan=APLN0001063 requisition=PR0001024 approver=jvaldez result=approved backTo=admin",
+  "  APPROVE plan=APLN0001075 requisition=PR0001025 approver=bokazaki result=approved backTo=admin",
+  "  APPROVE plan=APLN0001075 requisition=PR0001025 approver=jvaldez result=approved backTo=admin",
+  "  APPROVE plan=APLN0001075 requisition=PR0001025 approver=mhironaka result=approved backTo=admin",
+  "  APPROVE plan=APLN0001075 requisition=PR0001025 approver=rmanliguis result=approved backTo=admin",
+  "  round 2: 14 approval task(s) actioned (runner ok=True)",
+  "\napproval round 3:",
+  "  APPROVE plan=APLN0001064 requisition=PR0001024 approver=ekim result=approved backTo=admin",
+  "  APPROVE plan=APLN0001064 requisition=PR0001024 approver=bmiyashiro result=approved backTo=admin",
+  "  APPROVE plan=APLN0001064 requisition=PR0001024 approver=kpark result=approved backTo=admin",
+  "  APPROVE plan=APLN0001064 requisition=PR0001024 approver=scorrea result=approved backTo=admin",
+  "  APPROVE plan=APLN0001064 requisition=PR0001024 approver=gancheta result=approved backTo=admin",
+  "  APPROVE plan=APLN0001077 requisition=PR0001025 approver=bmiyashiro result=approved backTo=admin",
+  "  APPROVE plan=APLN0001077 requisition=PR0001025 approver=kpark result=approved backTo=admin",
+  "  APPROVE plan=APLN0001077 requisition=PR0001025 approver=ekim result=approved backTo=admin",
+  "  APPROVE plan=APLN0001077 requisition=PR0001025 approver=gancheta result=approved backTo=admin",
+  "  APPROVE plan=APLN0001077 requisition=PR0001025 approver=scorrea result=approved backTo=admin",
+  "  round 3: 10 approval task(s) actioned (runner ok=True)",
+  "\napproval round 4:",
+  "  round 4: 0 approval task(s) actioned (runner ok=True)",
+  "\ntotal approval tasks actioned: 28",
+  "\nplatform recorded 0 new impersonation events (0 start / 0 end)"
+ ]
+}

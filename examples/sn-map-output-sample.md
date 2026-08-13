@@ -392,5 +392,5 @@ Recorded because each cost a re-derivation, and the codex's rule generalises:
 | `business_criticality` is empty on all 18 business applications. Intentional, or an unfinished step? | Human confirmation; it is a plausible gap for a change-risk enhancement to depend on. |
 | Which of the duplicate NFH / freeze builds (if any) is the canonical one to extend? | Human decision — the instance carries no signal, and `sys_app` versions disagree. |
 | 22 incidents and 28 assignment-group-less incidents sit outside the NGB model. Legacy demo rows only? | Cross-tab company × created-on; not derived in this run. |
-| `STEP0.2` is missing from the update-set sequence. | Check the repo's own build history; it may never have been captured. |
+| `STEP0.2` is missing from the update-set sequence. | Not resolvable from the instance alone; the set may never have been captured. |
 | Release *name* is inferred from `glide.war` (`australia…patch3`). | `now-sdk explain` or the instance's own upgrade history for the authoritative build tag. |

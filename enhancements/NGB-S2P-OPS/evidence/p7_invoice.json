@@ -1,0 +1,61 @@
+{
+ "taxonomy": {
+  "exception_type": [
+   "quantity_variance",
+   "supplier_payment_data",
+   "price_variance",
+   "missing_receipt",
+   "tax_mismatch",
+   "duplicate_invoice"
+  ],
+  "root_cause": [
+   "receipt_not_recorded",
+   "tax_setup",
+   "ngb_data_error",
+   "price_not_updated",
+   "supplier_billing_error",
+   "po_not_updated"
+  ]
+ },
+ "invoice": {
+  "erp_source": "",
+  "erp_posting_date": "",
+  "due_date": "",
+  "total_line_amount": "",
+  "supplier_invoice_number": "POS-2026-04418",
+  "payment_terms": "Net 30",
+  "invoice_amount": "",
+  "invoice_date": "2026-08-12",
+  "number": "INV0001002",
+  "purchase_order": "",
+  "supplier": "Pacific Office Solutions LLC",
+  "legal_entity": "Nagahama Group",
+  "erp_number": "",
+  "state": "Draft",
+  "external_invoice_number": "POS-2026-04418"
+ },
+ "exception": {
+  "number": "FINEX0001002",
+  "short_description": "NGB J5 - invoiced 10 desks, 8 received",
+  "assignment_group": "ed153588c3aec350aaafb71d05013165",
+  "purchase_request": "4b6b2e5bc36e4b50aaafb71d050131d5",
+  "supplier": "5a3d1a1fc3aa4b50aaafb71d05013196",
+  "exception_type": "Procurement Exception",
+  "correlation_id": "POS-2026-04418",
+  "state": "10",
+  "priority": "2",
+  "assigned_to": "090dbd0cc3220750aaafb71d05013186",
+  "root_cause": "receipt_not_recorded"
+ },
+ "handoff_error": "{\"error\":{\"message\":\"Operation Failed\",\"detail\":\"Data Policy Exception: \\n\\tThe following fields are mandatory: Amount invoiced (Transaction currency)\"},\"status\":\"failure\"}",
+ "handoff": {
+  "erp_source": "",
+  "number": "INV0001002",
+  "sys_updated_by": "admin",
+  "erp_posting_date": "2026-08-12",
+  "erp_number": "NGB-AP-2026-000117",
+  "state": "draft",
+  "sys_updated_on": "2026-08-12 10:56:14"
+ },
+ "audit_rows": 14
+}
